@@ -26,10 +26,10 @@ const PAGE_LABELS = {
   "/trips": "Trips", "/maintenance": "Maintenance", "/reports": "Reports",
 };
 
-const NOTIFS = [
-  { id: 1, text: "GJ-18-EF-9012 engine overhaul overdue", time: "2m ago", col: "#ef4444" },
-  { id: 2, text: "New trip Ahmedabad → Surat scheduled", time: "18m ago", col: C },
-  { id: 3, text: "Kiran Desai completed trip to Jamnagar", time: "1h ago", col: "#22c55e" },
+const NOTIFS_DATA = [
+  { id: 1, text: "GJ-18-EF-9012 engine overhaul overdue", time: "2m ago", col: "#ef4444", unread: true },
+  { id: 2, text: "New trip Ahmedabad → Surat scheduled", time: "18m ago", col: C, unread: true },
+  { id: 3, text: "Kiran Desai completed trip to Jamnagar", time: "1h ago", col: "#22c55e", unread: true },
 ];
 
 export default function Navbar({ onMenuClick }) {
@@ -38,9 +38,19 @@ export default function Navbar({ onMenuClick }) {
   const location = useLocation();
   const [showNotif, setShowNotif] = useState(false);
   const [showUser, setShowUser] = useState(false);
+  const [notifications, setNotifications] = useState(NOTIFS_DATA);
 
   const pageLabel = PAGE_LABELS[location.pathname] || "Transvora";
   const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : "FM";
+  const unreadCount = notifications.filter(n => n.unread).length;
+
+  const markAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
+  };
+
+  const markRead = (id) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, unread: false } : n));
+  };
 
   return (
     <nav style={{
@@ -116,23 +126,40 @@ export default function Navbar({ onMenuClick }) {
             onMouseLeave={e => { if (!showNotif) { e.currentTarget.style.borderColor = "#1c1c22"; e.currentTarget.style.color = "#444"; } }}
           >
             <BellIcon />
-            <span style={{ position: "absolute", top: 7, right: 7, width: 7, height: 7, borderRadius: "50%", background: "#ef4444", border: "1.5px solid #0a0a0b" }} />
+            {unreadCount > 0 && (
+              <span style={{ position: "absolute", top: 7, right: 7, width: 7, height: 7, borderRadius: "50%", background: "#ef4444", border: "1.5px solid #0a0a0b" }} />
+            )}
           </button>
 
           {showNotif && (
             <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, width: 310, background: "#131316", border: "1px solid #1c1c22", borderRadius: 14, boxShadow: "0 20px 50px rgba(0,0,0,0.7)", zIndex: 200, overflow: "hidden" }}>
               <div style={{ padding: "13px 16px", borderBottom: "1px solid #1c1c22", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "#f0f0f0", fontSize: "0.9rem" }}>Notifications</span>
-                <span style={{ fontSize: "0.7rem", color: C, fontWeight: 600, cursor: "pointer" }}>Mark all read</span>
-              </div>
-              {NOTIFS.map(n => (
-                <div key={n.id} style={{ padding: "12px 16px", borderBottom: "1px solid #1c1c22", display: "flex", gap: 12, cursor: "pointer", transition: "background .14s" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "#18181c"}
-                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                <span
+                  onClick={markAllRead}
+                  style={{ fontSize: "0.7rem", color: unreadCount > 0 ? C : "#444", fontWeight: 600, cursor: unreadCount > 0 ? "pointer" : "default" }}
                 >
-                  <div style={{ width: 7, height: 7, borderRadius: "50%", background: n.col, marginTop: 6, flexShrink: 0 }} />
+                  Mark all read
+                </span>
+              </div>
+              {notifications.map(n => (
+                <div key={n.id}
+                  onClick={() => markRead(n.id)}
+                  style={{
+                    padding: "12px 16px",
+                    borderBottom: "1px solid #1c1c22",
+                    display: "flex",
+                    gap: 12,
+                    cursor: "pointer",
+                    transition: "background .14s",
+                    background: n.unread ? "rgba(79, 70, 229, 0.03)" : "transparent"
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = n.unread ? "rgba(79, 70, 229, 0.08)" : "#18181c"}
+                  onMouseLeave={e => e.currentTarget.style.background = n.unread ? "rgba(79, 70, 229, 0.03)" : "transparent"}
+                >
+                  <div style={{ width: 7, height: 7, borderRadius: "50%", background: n.unread ? n.col : "#333", marginTop: 6, flexShrink: 0 }} />
                   <div>
-                    <div style={{ fontSize: "0.81rem", color: "#ccc", lineHeight: 1.4 }}>{n.text}</div>
+                    <div style={{ fontSize: "0.81rem", color: n.unread ? "#ccc" : "#666", lineHeight: 1.4, fontWeight: n.unread ? 500 : 400 }}>{n.text}</div>
                     <div style={{ fontSize: "0.7rem", color: "#333", marginTop: 3 }}>{n.time}</div>
                   </div>
                 </div>
