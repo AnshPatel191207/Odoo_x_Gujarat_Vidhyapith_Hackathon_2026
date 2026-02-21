@@ -380,14 +380,16 @@ export default function Login() {
 
   const inp = {
     width: "100%", padding: "11px 14px",
-    background: "#131316", border: "1px solid #1c1c22",
-    borderRadius: 9, color: "#f0f0f0", fontSize: "0.88rem",
+    background: "var(--bg-secondary)", border: "1px solid var(--border)",
+    borderRadius: 9, color: "var(--text-primary)", fontSize: "0.88rem",
     fontFamily: "inherit", outline: "none", boxSizing: "border-box",
     transition: "border-color .15s",
   };
 
+
   return (
-    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "'Inter',sans-serif", background: "#0a0a0b" }}>
+    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "'Inter',sans-serif", background: "var(--bg-primary)" }}>
+
       {oauthProvider && (
         <OAuthPopup
           provider={oauthProvider}
@@ -401,27 +403,32 @@ export default function Login() {
         flex: "0 0 46%", position: "relative",
         display: "flex", flexDirection: "column", justifyContent: "center",
         padding: "60px 52px", overflow: "hidden",
-        background: "#0d0d10", borderRight: "1px solid #1c1c22",
+        background: "var(--bg-secondary)", borderRight: "1px solid var(--border)",
       }}>
+
         <ThreeBackground />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg,#0d0d10cc 60%,transparent)", pointerEvents: "none", zIndex: 1 }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, var(--bg-primary)cc 60%, transparent)", pointerEvents: "none", zIndex: 1 }} />
+
 
         <div style={{ position: "relative", zIndex: 2 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 44 }}>
             <LogoMark size={50} />
             <div>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.7rem", fontWeight: 800, letterSpacing: "-0.03em", color: "#f0f0f0" }}>Transvora</div>
-              <div style={{ fontSize: "0.62rem", color: "#333", letterSpacing: "0.12em", textTransform: "uppercase" }}>Fleet Intelligence Platform</div>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.7rem", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--text-primary)" }}>Transvora</div>
+              <div style={{ fontSize: "0.62rem", color: "var(--text-muted)", letterSpacing: "0.12em", textTransform: "uppercase" }}>Fleet Intelligence Platform</div>
             </div>
+
           </div>
 
-          <h2 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "2.5rem", fontWeight: 800, color: "#f0f0f0", lineHeight: 1.15, marginBottom: 14, letterSpacing: "-0.04em" }}>
+          <h2 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "2.5rem", fontWeight: 800, color: "var(--text-primary)", lineHeight: 1.15, marginBottom: 14, letterSpacing: "-0.04em" }}>
             Drive smarter,<br />
             <span style={{ color: C }}>fleet further.</span>
           </h2>
-          <p style={{ color: "#444", fontSize: "0.93rem", lineHeight: 1.7, marginBottom: 36, maxWidth: 370 }}>
+
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.93rem", lineHeight: 1.7, marginBottom: 36, maxWidth: 370 }}>
             A single pane of glass to track vehicles, manage drivers, and optimise every route — in real time.
           </p>
+
 
           <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
             {[
@@ -434,7 +441,8 @@ export default function Login() {
                 <div style={{ width: 16, height: 16, borderRadius: "50%", background: C, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
-                <span style={{ fontSize: "0.86rem", color: "#888" }}>{f}</span>
+                <span style={{ fontSize: "0.86rem", color: "var(--text-muted)" }}>{f}</span>
+
               </div>
             ))}
 
@@ -442,12 +450,13 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="login-right-panel" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 48px", background: "#0a0a0b" }}>
+      <div className="login-right-panel" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 48px", background: "var(--bg-primary)" }}>
         <div style={{ width: "100%", maxWidth: 390 }}>
           <div style={{ marginBottom: 30 }}>
-            <h3 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.65rem", fontWeight: 800, color: "#f0f0f0", letterSpacing: "-0.03em", marginBottom: 6 }}>Welcome back</h3>
-            <p style={{ color: "#333", fontSize: "0.86rem" }}>Sign in to your Transvora account.</p>
+            <h3 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.65rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.03em", marginBottom: 6 }}>Welcome back</h3>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.86rem" }}>Sign in to your Transvora account.</p>
           </div>
+
 
           <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 22 }}>
             {[
@@ -466,31 +475,34 @@ export default function Login() {
                   fontSize: "0.86rem", fontWeight: 500, fontFamily: "inherit",
                   cursor: "pointer", transition: "all .15s",
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = `${C}40`; e.currentTarget.style.color = "#f0f0f0"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "#25252d"; e.currentTarget.style.color = "#888"; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--border-light)"; e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.background = "var(--bg-card-hover)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-secondary)"; e.currentTarget.style.background = "var(--bg-secondary)"; }}
               >
+
                 {b.icon}{b.label}
               </button>
             ))}
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22 }}>
-            <div style={{ flex: 1, height: 1, background: "#1c1c22" }} />
-            <span style={{ fontSize: "0.73rem", color: "#333" }}>or email</span>
-            <div style={{ flex: 1, height: 1, background: "#1c1c22" }} />
+            <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+            <span style={{ fontSize: "0.73rem", color: "var(--text-muted)" }}>or email</span>
+            <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
           </div>
+
 
           <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 13 }}>
             <div>
-              <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "#444", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>Email</label>
+              <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--text-muted)", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>Email</label>
               <input
                 type="email" placeholder="example@gmail.com"
                 value={email} onChange={e => setEmail(e.target.value)}
                 style={inp}
                 onFocus={e => e.target.style.borderColor = `${C}60`}
-                onBlur={e => e.target.style.borderColor = "#1c1c22"}
+                onBlur={e => e.target.style.borderColor = "var(--border)"}
               />
             </div>
+
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                 <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "#444", textTransform: "uppercase", letterSpacing: "0.06em" }}>Password</label>
@@ -503,8 +515,9 @@ export default function Login() {
                   value={password} onChange={e => setPassword(e.target.value)}
                   style={{ ...inp, paddingRight: 40 }}
                   onFocus={e => e.target.style.borderColor = `${C}60`}
-                  onBlur={e => e.target.style.borderColor = "#1c1c22"}
+                  onBlur={e => e.target.style.borderColor = "var(--border)"}
                 />
+
                 <button type="button" onClick={() => setShowPwd(p => !p)} style={{
                   position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
                   background: "none", border: "none", color: "#444", cursor: "pointer", padding: 2,
@@ -527,8 +540,9 @@ export default function Login() {
               >
                 {remember && <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
               </button>
-              <span style={{ fontSize: "0.8rem", color: "#555" }}>Remember me for 7 days</span>
+              <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>Remember me for 7 days</span>
             </div>
+
 
             {loginError && (
               <div style={{ padding: "9px 12px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, fontSize: "0.8rem", color: "#ef4444" }}>
@@ -562,10 +576,11 @@ export default function Login() {
             <span style={{ color: C, cursor: "pointer", fontWeight: 600 }}>Request access</span>
           </p>
 
-          <div style={{ marginTop: 24, padding: "9px 13px", background: "#131316", border: "1px solid #1c1c22", borderRadius: 9, display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ marginTop: 24, padding: "9px 13px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 9, display: "flex", alignItems: "center", gap: 8 }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-            <span style={{ fontSize: "0.72rem", color: "#444" }}>Enterprise-grade security · SOC 2 Type II · TLS 1.3</span>
+            <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Enterprise-grade security · SOC 2 Type II · TLS 1.3</span>
           </div>
+
         </div>
       </div>
     </div>

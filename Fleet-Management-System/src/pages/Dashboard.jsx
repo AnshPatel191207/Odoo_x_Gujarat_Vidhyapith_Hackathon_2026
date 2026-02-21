@@ -6,8 +6,8 @@ import {
   AreaChart, Area,
 } from "recharts";
 
-const C = "#4f46e5"; 
-const CL = "#6366f1"; 
+const C = "#4f46e5";
+const CL = "#6366f1";
 
 
 const Ic = {
@@ -33,11 +33,12 @@ const SPARK = {
 
 
 const SBADGE = {
-  "Completed": { bg: "rgba(34,197,94,0.1)", bd: "rgba(34,197,94,0.25)", c: "#22c55e" },
-  "In Progress": { bg: `${C}18`, bd: `${C}40`, c: CL },
-  "Scheduled": { bg: `${C}10`, bd: `${C}30`, c: CL },
-  "Cancelled": { bg: "rgba(239,68,68,0.1)", bd: "rgba(239,68,68,0.25)", c: "#ef4444" },
+  "Completed": { bg: "var(--success-bg)", bd: "var(--success)40", c: "var(--success)" },
+  "In Progress": { bg: "var(--accent-glow)", bd: "var(--accent)40", c: "var(--accent-light)" },
+  "Scheduled": { bg: "var(--bg-secondary)", bd: "var(--border)", c: "var(--text-secondary)" },
+  "Cancelled": { bg: "var(--danger-bg)", bd: "var(--danger)40", c: "var(--danger)" },
 };
+
 function Pill({ s }) {
   const t = SBADGE[s] || SBADGE["Scheduled"];
   return <span style={{ padding: "3px 10px", borderRadius: 99, background: t.bg, border: `1px solid ${t.bd}`, color: t.c, fontSize: "0.7rem", fontWeight: 700, whiteSpace: "nowrap" }}>{s}</span>;
@@ -46,49 +47,53 @@ function Pill({ s }) {
 
 function MetricCard({ icon, label, value, sub, up, trendPct, accent, sparkData }) {
   const ac = accent || C;
+  // Use a clean ID for gradients to avoid issues with spaces
+  const gradientId = `sg-${label.replace(/\s+/g, '-')}`;
+
   return (
     <div style={{
-      background: "#131316", border: "1px solid #1c1c22", borderRadius: 14,
+      background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14,
       padding: "18px 18px 0", overflow: "hidden", position: "relative",
       transition: "border-color .2s,transform .2s,box-shadow .2s", cursor: "default",
     }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = `${ac}35`; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 24px ${ac}18`; }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = "#1c1c22"; e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--border-light)"; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "var(--shadow-md)"; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
     >
-      
+
       <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: 3, background: ac, borderRadius: "14px 0 0 14px" }} />
 
       <div style={{ paddingLeft: 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <div style={{ width: 38, height: 38, borderRadius: 10, background: `${ac}15`, border: `1px solid ${ac}25`, display: "flex", alignItems: "center", justifyContent: "center", color: ac }}>{icon}</div>
           {trendPct && (
-            <div style={{ padding: "2px 8px", borderRadius: 99, background: up ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", border: `1px solid ${up ? "rgba(34,197,94,0.25)" : "rgba(239,68,68,0.25)"}`, color: up ? "#22c55e" : "#ef4444", fontSize: "0.68rem", fontWeight: 700 }}>
+            <div style={{ padding: "2px 8px", borderRadius: 99, background: up ? "var(--success-bg)" : "var(--danger-bg)", border: `1px solid ${up ? "var(--success)" : "var(--danger)"}40`, color: up ? "var(--success)" : "var(--danger)", fontSize: "0.68rem", fontWeight: 700 }}>
               {up ? "↑" : "↓"} {trendPct}
             </div>
           )}
         </div>
-        <div style={{ fontSize: "0.66rem", fontWeight: 600, color: "#444", textTransform: "uppercase", letterSpacing: "0.09em" }}>{label}</div>
-        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "2rem", fontWeight: 800, color: "#f0f0f0", letterSpacing: "-0.03em", lineHeight: 1.1, marginTop: 4 }}>{value}</div>
-        <div style={{ fontSize: "0.74rem", color: "#333", marginTop: 4, marginBottom: 14 }}>{sub}</div>
+        <div style={{ fontSize: "0.66rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.09em" }}>{label}</div>
+        <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "2rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.03em", lineHeight: 1.1, marginTop: 4 }}>{value}</div>
+        <div style={{ fontSize: "0.74rem", color: "var(--text-secondary)", marginTop: 4, marginBottom: 14 }}>{sub}</div>
       </div>
 
-      
+
       {sparkData && (
         <ResponsiveContainer width="100%" height={46}>
           <AreaChart data={sparkData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
             <defs>
-              <linearGradient id={`sg-${label}`} x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={ac} stopOpacity={0.2} />
                 <stop offset="100%" stopColor={ac} stopOpacity={0} />
               </linearGradient>
             </defs>
-            <Area type="monotone" dataKey="v" stroke={ac} strokeWidth={1.8} fill={`url(#sg-${label})`} dot={false} />
+            <Area type="monotone" dataKey="v" stroke={ac} strokeWidth={2} fill={`url(#${gradientId})`} dot={false} />
           </AreaChart>
         </ResponsiveContainer>
       )}
     </div>
   );
 }
+
 
 
 const PIE_COLS = [C, "#555", "#ef4444"];
@@ -105,17 +110,19 @@ function FleetDonut({ active, inService, inactive }) {
           <Pie data={data} innerRadius={32} outerRadius={52} paddingAngle={3} dataKey="value" strokeWidth={0}>
             {data.map((_, i) => <Cell key={i} fill={PIE_COLS[i]} />)}
           </Pie>
-          <RTooltip contentStyle={{ background: "#131316", border: "1px solid #1c1c22", borderRadius: 8, fontSize: "0.78rem", color: "#f0f0f0" }} itemStyle={{ color: "#f0f0f0" }} />
+          <RTooltip contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: "0.78rem", color: "var(--text-primary)" }} itemStyle={{ color: "var(--text-primary)" }} />
         </PieChart>
+
       </ResponsiveContainer>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {data.map((d, i) => (
           <div key={d.name} style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ width: 3, height: 18, borderRadius: 99, background: PIE_COLS[i] }} />
             <div>
-              <div style={{ fontSize: "0.7rem", color: "#444" }}>{d.name}</div>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "#f0f0f0", fontSize: "1.05rem", lineHeight: 1 }}>{d.value}</div>
+              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>{d.name}</div>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "var(--text-primary)", fontSize: "1.05rem", lineHeight: 1 }}>{d.value}</div>
             </div>
+
           </div>
         ))}
       </div>
@@ -129,19 +136,21 @@ function ActionTile({ icon, label, sub, accent, onClick }) {
   return (
     <button onClick={onClick} style={{
       display: "flex", alignItems: "center", gap: 12, padding: "13px 14px",
-      background: "#101012", border: "1px solid #1c1c22",
+      background: "var(--bg-secondary)", border: "1px solid var(--border)",
       borderRadius: 10, width: "100%", cursor: "pointer", textAlign: "left",
       transition: "all .15s", fontFamily: "inherit",
     }}
-      onMouseEnter={e => { e.currentTarget.style.background = "#18181c"; e.currentTarget.style.borderColor = `${ac}40`; e.currentTarget.style.transform = "translateX(2px)"; }}
-      onMouseLeave={e => { e.currentTarget.style.background = "#101012"; e.currentTarget.style.borderColor = "#1c1c22"; e.currentTarget.style.transform = "none"; }}
+      onMouseEnter={e => { e.currentTarget.style.background = "var(--bg-card-hover)"; e.currentTarget.style.borderColor = `${ac}40`; e.currentTarget.style.transform = "translateX(2px)"; }}
+      onMouseLeave={e => { e.currentTarget.style.background = "var(--bg-secondary)"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "none"; }}
     >
+
       <div style={{ width: 34, height: 34, borderRadius: 8, background: `${ac}15`, border: `1px solid ${ac}25`, display: "flex", alignItems: "center", justifyContent: "center", color: ac, flexShrink: 0 }}>{icon}</div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: "0.83rem", fontWeight: 600, color: "#e0e0e0" }}>{label}</div>
-        {sub && <div style={{ fontSize: "0.71rem", color: "#444", marginTop: 1 }}>{sub}</div>}
+        <div style={{ fontSize: "0.83rem", fontWeight: 600, color: "var(--text-primary)" }}>{label}</div>
+        {sub && <div style={{ fontSize: "0.71rem", color: "var(--text-muted)", marginTop: 1 }}>{sub}</div>}
       </div>
-      <span style={{ color: "#333" }}><Ic.Arrow /></span>
+      <span style={{ color: "var(--text-muted)" }}><Ic.Arrow /></span>
+
     </button>
   );
 }
@@ -163,7 +172,7 @@ export default function Dashboard() {
   const criticals = maintenance.filter(m => m.priority === "Critical");
   const recentTrips = [...trips].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 6);
 
-  
+
   const kpis = [
     { icon: <Ic.Truck />, label: "Total Vehicles", value: vehicles.length, sub: `${activeV} active · ${inServiceV} service`, up: true, trendPct: "5%", accent: C, sparkData: SPARK.vehicles },
     { icon: <Ic.User />, label: "Active Drivers", value: activeD, sub: `of ${drivers.length} total`, up: true, trendPct: "2%", accent: "#22c55e", sparkData: SPARK.drivers },
@@ -177,22 +186,24 @@ export default function Dashboard() {
   return (
     <Layout>
 
-      
+
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 26 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
             <div style={{ width: 3, height: 28, background: C, borderRadius: 99 }} />
-            <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.8rem", fontWeight: 800, color: "#f0f0f0", letterSpacing: "-0.03em", margin: 0 }}>Command Center</h1>
+            <h1 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.8rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.03em", margin: 0 }}>Command Center</h1>
           </div>
-          <p style={{ color: "#333", fontSize: "0.78rem", marginLeft: 13 }}>Fleet overview · {today}</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: "0.78rem", marginLeft: 13 }}>Fleet overview · {today}</p>
+
         </div>
         <div style={{ display: "flex", gap: 9 }}>
-          <button onClick={() => navigate("/reports")} style={{ ...btnBase, padding: "8px 15px", background: "#131316", border: "1px solid #25252d", color: "#888" }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = `${C}40`; e.currentTarget.style.color = "#f0f0f0"; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = "#25252d"; e.currentTarget.style.color = "#888"; }}
+          <button onClick={() => navigate("/reports")} style={{ ...btnBase, padding: "8px 15px", background: "var(--bg-secondary)", border: "1px solid var(--border)", color: "var(--text-secondary)" }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--border-light)"; e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.background = "var(--bg-card-hover)"; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-secondary)"; e.currentTarget.style.background = "var(--bg-secondary)"; }}
           >
             <Ic.Chart /> Reports
           </button>
+
           <button onClick={() => navigate("/trips")} style={{ ...btnBase, padding: "8px 16px", background: C, color: "#fff", fontWeight: 600, fontFamily: "'Space Grotesk',sans-serif", boxShadow: `0 4px 14px ${C}40` }}
             onMouseEnter={e => { e.currentTarget.style.background = CL; e.currentTarget.style.transform = "translateY(-1px)"; }}
             onMouseLeave={e => { e.currentTarget.style.background = C; e.currentTarget.style.transform = "none"; }}
@@ -202,58 +213,63 @@ export default function Dashboard() {
         </div>
       </div>
 
-      
+
       <div className="kpi-grid" style={{ marginBottom: 18 }}>
         {kpis.map(k => <MetricCard key={k.label} {...k} />)}
       </div>
 
-      
+
       <div className="dashboard-content-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) min(290px,100%)", gap: 14 }}>
 
-        
+
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-          
-          <div style={{ background: "#131316", border: "1px solid #1c1c22", borderRadius: 14, overflow: "hidden" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 20px", borderBottom: "1px solid #1c1c22" }}>
+
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 20px", borderBottom: "1px solid var(--border)" }}>
               <div>
-                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "#f0f0f0", fontSize: "0.94rem" }}>Recent Trips</div>
-                <div style={{ fontSize: "0.71rem", color: "#333", marginTop: 2 }}>Latest fleet movements</div>
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "var(--text-primary)", fontSize: "0.94rem" }}>Recent Trips</div>
+                <div style={{ fontSize: "0.71rem", color: "var(--text-muted)", marginTop: 2 }}>Latest fleet movements</div>
               </div>
               <button onClick={() => navigate("/trips")} style={{ background: "none", border: "none", color: C, fontSize: "0.79rem", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
                 View All <Ic.Arrow />
               </button>
             </div>
+
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ background: "#101012" }}>
+                <tr style={{ background: "var(--bg-secondary)" }}>
                   {["Route", "Driver", "Vehicle", "Dist.", "Status"].map(h => (
-                    <th key={h} style={{ padding: "10px 18px", textAlign: "left", fontSize: "0.65rem", fontWeight: 700, color: "#333", textTransform: "uppercase", letterSpacing: "0.08em", whiteSpace: "nowrap" }}>{h}</th>
+                    <th key={h} style={{ padding: "10px 18px", textAlign: "left", fontSize: "0.65rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", whiteSpace: "nowrap" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
+
               <tbody>
                 {recentTrips.map((t, i) => (
-                  <tr key={t.id} style={{ borderTop: "1px solid #1c1c22", transition: "background .12s" }}
-                    onMouseEnter={e => e.currentTarget.style.background = "#18181c"}
+                  <tr key={t.id} style={{ borderTop: "1px solid var(--border)", transition: "background .12s" }}
+                    onMouseEnter={e => e.currentTarget.style.background = "var(--bg-card-hover)"}
                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                   >
                     <td style={{ padding: "12px 18px" }}>
-                      <div style={{ fontWeight: 600, color: "#e0e0e0", fontSize: "0.84rem" }}>{t.origin}</div>
-                      <div style={{ color: "#333", fontSize: "0.73rem", marginTop: 1, display: "flex", alignItems: "center", gap: 3 }}><Ic.Pin />{t.destination}</div>
+                      <div style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: "0.84rem" }}>{t.origin}</div>
+                      <div style={{ color: "var(--text-muted)", fontSize: "0.73rem", marginTop: 1, display: "flex", alignItems: "center", gap: 3 }}><Ic.Pin />{t.destination}</div>
                     </td>
+
                     <td style={{ padding: "12px 18px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                         <div style={{ width: 26, height: 26, borderRadius: "50%", background: C, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.68rem", fontWeight: 800, color: "#fff", flexShrink: 0 }}>
                           {t.driver.charAt(0)}
                         </div>
-                        <span style={{ color: "#888", fontSize: "0.81rem", whiteSpace: "nowrap" }}>{t.driver.split(" ")[0]}</span>
+                        <span style={{ color: "var(--text-secondary)", fontSize: "0.81rem", whiteSpace: "nowrap" }}>{t.driver.split(" ")[0]}</span>
                       </div>
+
                     </td>
                     <td style={{ padding: "12px 18px" }}>
                       <span style={{ fontFamily: "monospace", background: `${C}12`, color: CL, padding: "2px 7px", borderRadius: 5, fontSize: "0.74rem", border: `1px solid ${C}25` }}>{t.vehicle}</span>
                     </td>
-                    <td style={{ padding: "12px 18px", color: "#444", fontSize: "0.81rem" }}>{t.distance} km</td>
+                    <td style={{ padding: "12px 18px", color: "var(--text-secondary)", fontSize: "0.81rem" }}>{t.distance} km</td>
+
                     <td style={{ padding: "12px 18px" }}><Pill s={t.status} /></td>
                   </tr>
                 ))}
@@ -261,49 +277,53 @@ export default function Dashboard() {
             </table>
           </div>
 
-          
+
           {(overdues.length + criticals.length) > 0 && (
-            <div style={{ background: "#131316", border: "1px solid #1c1c22", borderLeft: `3px solid #ef4444`, borderRadius: 14, overflow: "hidden" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid #1c1c22" }}>
+            <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderLeft: `3px solid var(--danger)`, borderRadius: 14, overflow: "hidden" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid var(--border)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#ef4444", animation: "pulse 2s infinite" }} />
-                  <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "#f0f0f0", fontSize: "0.93rem" }}>Urgent Maintenance</span>
+                  <div style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--danger)", animation: "pulse 2s infinite" }} />
+                  <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "var(--text-primary)", fontSize: "0.93rem" }}>Urgent Maintenance</span>
                 </div>
-                <span style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)", color: "#ef4444", fontSize: "0.68rem", fontWeight: 700, padding: "2px 9px", borderRadius: 99 }}>
+                <span style={{ background: "var(--danger-bg)", border: "1px solid var(--danger)40", color: "var(--danger)", fontSize: "0.68rem", fontWeight: 700, padding: "2px 9px", borderRadius: 99 }}>
                   {overdues.length + criticals.length} pending
                 </span>
               </div>
+
               <div style={{ padding: "12px 16px", display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 8 }}>
                 {[...overdues, ...criticals].slice(0, 4).map(m => (
-                  <div key={m.id} style={{ padding: "11px 13px", background: "#101012", border: "1px solid #1c1c22", borderLeft: `2px solid ${m.priority === "Overdue" ? "#ef4444" : "#eab308"}`, borderRadius: 9 }}>
+                  <div key={m.id} style={{ padding: "11px 13px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderLeft: `2px solid ${m.priority === "Overdue" ? "var(--danger)" : "var(--warning)"}`, borderRadius: 9 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
                       <span style={{ fontFamily: "monospace", fontSize: "0.74rem", color: CL, background: `${C}12`, padding: "1px 5px", borderRadius: 4 }}>{m.vehicle}</span>
-                      <span style={{ fontSize: "0.62rem", fontWeight: 800, color: m.priority === "Overdue" ? "#ef4444" : "#eab308", textTransform: "uppercase", letterSpacing: "0.06em" }}>{m.priority}</span>
+                      <span style={{ fontSize: "0.62rem", fontWeight: 800, color: m.priority === "Overdue" ? "var(--danger)" : "var(--warning)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{m.priority}</span>
                     </div>
-                    <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "#d0d0d0" }}>{m.type}</div>
-                    <div style={{ fontSize: "0.71rem", color: "#333", marginTop: 2 }}>{m.date}</div>
+                    <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)" }}>{m.type}</div>
+                    <div style={{ fontSize: "0.71rem", color: "var(--text-muted)", marginTop: 2 }}>{m.date}</div>
                   </div>
                 ))}
               </div>
+
             </div>
           )}
         </div>
 
-        
+
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 
-          
-          <div style={{ background: "#131316", border: "1px solid #1c1c22", borderRadius: 14, padding: "16px 18px" }}>
-            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "#f0f0f0", fontSize: "0.92rem", marginBottom: 3 }}>Fleet Distribution</div>
-            <div style={{ fontSize: "0.7rem", color: "#333", marginBottom: 14 }}>Live vehicle breakdown</div>
+
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, padding: "16px 18px" }}>
+            <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "var(--text-primary)", fontSize: "0.92rem", marginBottom: 3 }}>Fleet Distribution</div>
+            <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", marginBottom: 14 }}>Live vehicle breakdown</div>
             <FleetDonut active={activeV} inService={inServiceV} inactive={inactiveV} />
           </div>
 
-          
-          <div style={{ background: "#131316", border: "1px solid #1c1c22", borderRadius: 14, overflow: "hidden" }}>
-            <div style={{ padding: "14px 18px", borderBottom: "1px solid #1c1c22" }}>
-              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "#f0f0f0", fontSize: "0.92rem" }}>Quick Actions</div>
+
+
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--border)" }}>
+              <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "var(--text-primary)", fontSize: "0.92rem" }}>Quick Actions</div>
             </div>
+
             <div style={{ padding: "10px 12px", display: "flex", flexDirection: "column", gap: 6 }}>
               {[
                 { icon: <Ic.Truck />, label: "Add Vehicle", sub: "Register a new vehicle", accent: C, path: "/vehicles" },

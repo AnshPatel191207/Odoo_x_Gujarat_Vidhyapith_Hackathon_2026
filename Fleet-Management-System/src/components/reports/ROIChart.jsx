@@ -38,11 +38,12 @@ export default function ROIChart() {
             <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: 16 }}>Monthly breakdown (₹)</p>
             <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={ROI_DATA} margin={{ top: 5, right: 20, left: 0, bottom: 5 }} barGap={4}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="month" tick={{ fill: "#64748b", fontSize: 12 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: "#64748b", fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={v => `₹${(v / 1000).toFixed(0)}K`} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: "0.8rem", color: "#94a3b8" }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis dataKey="month" tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `₹${(v / 1000).toFixed(0)}K`} />
+                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'var(--bg-card-hover)', opacity: 0.4 }} />
+                    <Legend wrapperStyle={{ fontSize: "0.75rem", color: "var(--text-muted)", paddingTop: 10 }} iconType="rect" />
+
                     <Bar dataKey="Revenue" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={40} />
                     <Bar dataKey="Maintenance" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={40} />
                 </BarChart>

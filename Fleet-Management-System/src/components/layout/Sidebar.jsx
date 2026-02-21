@@ -27,7 +27,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      
+
       {isOpen && (
         <div
           className="sidebar-overlay"
@@ -41,13 +41,14 @@ export default function Sidebar({ isOpen, onClose }) {
         style={{
           position: "fixed", top: "var(--navbar-h)", left: 0, bottom: 0,
           width: "var(--sidebar-w)",
-          background: "#0a0a0b",
-          borderRight: "1px solid #1c1c22",
+          background: "var(--bg-primary)",
+          borderRight: "1px solid var(--border)",
           display: "flex", flexDirection: "column",
           padding: "16px 10px",
           zIndex: 90, overflowY: "auto",
           transition: "transform .25s ease, width .25s ease",
         }}
+
       >
         <nav style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
           {NAV.map(item => {
@@ -65,15 +66,17 @@ export default function Sidebar({ isOpen, onClose }) {
                   fontFamily: "'Inter',sans-serif",
                   fontSize: "0.86rem",
                   fontWeight: active ? 600 : 400,
-                  color: active ? "#fff" : "#555",
+                  color: active ? "#fff" : "var(--text-secondary)",
                   background: active ? C : "transparent",
                   transition: "all .15s ease",
                   letterSpacing: active ? "-0.01em" : "0",
                 }}
-                onMouseEnter={e => { if (!active) { e.currentTarget.style.color = "#bbb"; e.currentTarget.style.background = "#18181c"; } }}
-                onMouseLeave={e => { if (!active) { e.currentTarget.style.color = "#555"; e.currentTarget.style.background = "transparent"; } }}
+                onMouseEnter={e => { if (!active) { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.background = "var(--bg-card-hover)"; } }}
+                onMouseLeave={e => { if (!active) { e.currentTarget.style.color = "var(--text-secondary)"; e.currentTarget.style.background = "transparent"; } }}
+
               >
-                <span style={{ color: active ? "rgba(255,255,255,0.85)" : "#444", display: "flex", flexShrink: 0 }}><Icon /></span>
+                <span style={{ color: active ? "rgba(255,255,255,0.85)" : "var(--text-muted)", display: "flex", flexShrink: 0 }}><Icon /></span>
+
                 <span>{item.label || item.key}</span>
                 {active && <span style={{ marginLeft: "auto", width: 5, height: 5, borderRadius: "50%", background: "rgba(255,255,255,0.5)" }} />}
               </Link>
@@ -81,10 +84,11 @@ export default function Sidebar({ isOpen, onClose }) {
           })}
         </nav>
 
-        <div style={{ borderTop: "1px solid #1c1c22", paddingTop: 14, textAlign: "center" }}>
+        <div style={{ borderTop: "1px solid var(--border)", paddingTop: 14, textAlign: "center" }}>
           <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, fontSize: "0.78rem", color: C }}>Transvora v1.0</div>
-          <div style={{ fontSize: "0.68rem", color: "#222", marginTop: 2 }}>Fleet Management</div>
+          <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", marginTop: 2 }}>Fleet Management</div>
         </div>
+
       </aside>
     </>
   );

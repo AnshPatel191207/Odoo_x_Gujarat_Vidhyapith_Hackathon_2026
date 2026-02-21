@@ -6,7 +6,7 @@ export default function FuelLogs() {
     const { vehicles, trips } = useFleet();
     const [filter, setFilter] = useState("all");
 
-    
+
     const FUEL_LOGS = [
         { id: 1, date: "2026-02-21", vehicle: "GJ-01-AB-1234", liters: 65, costPerLiter: 93.5, total: 6077.5, odometer: 45380, type: "Diesel", trip: "AHM → ST" },
         { id: 2, date: "2026-02-20", vehicle: "GJ-05-CD-5678", liters: 55, costPerLiter: 93.5, total: 5142.5, odometer: 62210, type: "Diesel", trip: "ST → MUM" },
@@ -48,7 +48,7 @@ export default function FuelLogs() {
 
     return (
         <Layout>
-            
+
             <div className="page-header">
                 <div>
                     <h2 className="page-title">Fuel Logs</h2>
@@ -63,9 +63,9 @@ export default function FuelLogs() {
                                 padding: "7px 14px", borderRadius: 8, border: "1px solid",
                                 fontSize: "0.8rem", fontWeight: 500, cursor: "pointer",
                                 textTransform: "capitalize", fontFamily: "inherit",
-                                background: filter === f ? "#4f46e5" : "transparent",
-                                borderColor: filter === f ? "#4f46e5" : "#1c1c22",
-                                color: filter === f ? "#fff" : "#555",
+                                background: filter === f ? "var(--accent)" : "transparent",
+                                borderColor: filter === f ? "var(--accent)" : "var(--border)",
+                                color: filter === f ? "#fff" : "var(--text-secondary)",
                                 transition: "all .15s",
                             }}
                         >
@@ -73,9 +73,10 @@ export default function FuelLogs() {
                         </button>
                     ))}
                 </div>
+
             </div>
 
-            
+
             <div className="kpi-grid" style={{ marginBottom: 24 }}>
                 {kpis.map(kpi => (
                     <div key={kpi.label} className="card" style={{ borderLeft: `3px solid ${kpi.color}` }}>
@@ -97,7 +98,7 @@ export default function FuelLogs() {
                 ))}
             </div>
 
-            
+
             <div className="card" style={{ padding: 0, overflow: "hidden" }}>
                 <div style={{ padding: "18px 20px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <h4 style={{ margin: 0, fontFamily: "'Space Grotesk',sans-serif" }}>Fill History</h4>
@@ -152,16 +153,17 @@ export default function FuelLogs() {
                                 </td>
                                 <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>{log.liters} L</td>
                                 <td style={{ color: "var(--text-secondary)" }}>₹{log.costPerLiter.toFixed(1)}</td>
-                                <td style={{ fontWeight: 700, color: "#ef4444" }}>₹{log.total.toLocaleString()}</td>
+                                <td style={{ fontWeight: 700, color: "var(--danger)" }}>₹{log.total.toLocaleString()}</td>
                                 <td style={{ color: "var(--text-secondary)", fontSize: "0.82rem" }}>{log.odometer.toLocaleString()} km</td>
                                 <td style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>{log.trip}</td>
+
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
 
-            
+
             <div className="card" style={{ marginTop: 20 }}>
                 <h4 style={{ margin: "0 0 16px 0", fontFamily: "'Space Grotesk',sans-serif" }}>Spend by Vehicle</h4>
                 {FUEL_LOGS.map(log => {
@@ -169,17 +171,18 @@ export default function FuelLogs() {
                     return (
                         <div key={log.id} style={{ marginBottom: 14 }}>
                             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4, fontSize: "0.8rem" }}>
-                                <span style={{ fontFamily: "monospace", color: "#818cf8" }}>{log.vehicle}</span>
-                                <span style={{ color: "var(--text-muted)" }}>₹{log.total.toLocaleString()} <span style={{ color: "#444", marginLeft: 4 }}>({pct}%)</span></span>
+                                <span style={{ fontFamily: "monospace", color: "var(--accent-light)" }}>{log.vehicle}</span>
+                                <span style={{ color: "var(--text-muted)" }}>₹{log.total.toLocaleString()} <span style={{ color: "var(--text-muted)", opacity: 0.6, marginLeft: 4 }}>({pct}%)</span></span>
                             </div>
-                            <div style={{ height: 5, background: "#1c1c22", borderRadius: 4, overflow: "hidden" }}>
+                            <div style={{ height: 5, background: "var(--bg-secondary)", borderRadius: 4, overflow: "hidden", border: "1px solid var(--border)" }}>
                                 <div style={{
                                     height: "100%", width: `${pct}%`,
-                                    background: "linear-gradient(90deg, #4f46e5, #818cf8)",
+                                    background: "var(--brand-gradient)",
                                     borderRadius: 4, transition: "width .6s ease",
                                 }} />
                             </div>
                         </div>
+
                     );
                 })}
             </div>

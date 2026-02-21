@@ -1,7 +1,9 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
+import { useState } from "react";
+
 
 const C = "#4f46e5";
 
@@ -11,8 +13,10 @@ const TabIcon = ({ active, children }) => (
 
 export default function Settings() {
     const { user, logout } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
     const [tab, setTab] = useState("profile");
+
 
     const [profile, setProfile] = useState({
         name: user?.name || "Fleet Manager",
@@ -24,7 +28,8 @@ export default function Settings() {
     });
 
     const [prefs, setPrefs] = useState({
-        theme: "dark",
+        theme: theme,
+
         language: "en",
         timezone: "Asia/Kolkata",
         currency: "INR",
@@ -46,33 +51,35 @@ export default function Settings() {
 
     const inputStyle = {
         width: "100%", padding: "10px 14px",
-        background: "#101012", border: "1px solid #1c1c22",
-        borderRadius: 9, color: "#f0f0f0", fontSize: "0.85rem",
+        background: "var(--bg-secondary)", border: "1px solid var(--border)",
+        borderRadius: 9, color: "var(--text-primary)", fontSize: "0.85rem",
         fontFamily: "inherit", outline: "none", boxSizing: "border-box",
         transition: "border-color .15s",
     };
 
     const labelStyle = {
-        display: "block", fontSize: "0.75rem", color: "#555",
+        display: "block", fontSize: "0.75rem", color: "var(--text-muted)",
         textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6,
     };
 
     const Toggle = ({ value, onChange, label }) => (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "13px 0", borderBottom: "1px solid #141418" }}>
-            <span style={{ fontSize: "0.84rem", color: "#aaa" }}>{label}</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "13px 0", borderBottom: "1px solid var(--border)" }}>
+            <span style={{ fontSize: "0.84rem", color: "var(--text-secondary)" }}>{label}</span>
+
             <button
                 onClick={() => onChange(!value)}
                 style={{
                     width: 44, height: 24, borderRadius: 12, border: "none",
-                    background: value ? C : "#1c1c22", cursor: "pointer",
+                    background: value ? C : "var(--border)", cursor: "pointer",
                     position: "relative", transition: "background .2s", flexShrink: 0,
                 }}
             >
                 <span style={{
                     position: "absolute", top: 3, left: value ? 23 : 3,
                     width: 18, height: 18, borderRadius: "50%", background: "#fff",
-                    transition: "left .2s", boxShadow: "0 1px 4px rgba(0,0,0,0.4)",
+                    transition: "left .2s", boxShadow: "var(--shadow-sm)",
                 }} />
+
             </button>
         </div>
     );
@@ -119,7 +126,7 @@ export default function Settings() {
             <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 20, alignItems: "start" }}>
 
                 <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-                    <div style={{ padding: "20px 16px", borderBottom: "1px solid #141418", textAlign: "center" }}>
+                    <div style={{ padding: "20px 16px", borderBottom: "1px solid var(--border)", textAlign: "center" }}>
                         <div style={{
                             width: 64, height: 64, borderRadius: "50%",
                             background: C, display: "flex", alignItems: "center", justifyContent: "center",
@@ -129,8 +136,9 @@ export default function Settings() {
                         }}>
                             {profile.name.slice(0, 2).toUpperCase()}
                         </div>
-                        <div style={{ fontWeight: 700, color: "#f0f0f0", fontSize: "0.9rem" }}>{profile.name}</div>
-                        <div style={{ fontSize: "0.72rem", color: "#444", marginTop: 2, wordBreak: "break-all" }}>{profile.email}</div>
+                        <div style={{ fontWeight: 700, color: "var(--text-primary)", fontSize: "0.9rem" }}>{profile.name}</div>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: 2, wordBreak: "break-all" }}>{profile.email}</div>
+
                         <div style={{
                             display: "inline-block", marginTop: 8, padding: "2px 10px",
                             borderRadius: 20, fontSize: "0.7rem", fontWeight: 600,
@@ -150,17 +158,18 @@ export default function Settings() {
                                     width: "100%", display: "flex", alignItems: "center", gap: 10,
                                     padding: "9px 12px", borderRadius: 8, border: "none",
                                     background: tab === t.key ? C : "transparent",
-                                    color: tab === t.key ? "#fff" : "#555",
+                                    color: tab === t.key ? "#fff" : "var(--text-secondary)",
                                     fontSize: "0.84rem", fontFamily: "inherit",
                                     fontWeight: tab === t.key ? 600 : 400,
                                     cursor: "pointer", transition: "all .15s", textAlign: "left",
                                 }}
-                                onMouseEnter={e => { if (tab !== t.key) { e.currentTarget.style.background = "#18181c"; e.currentTarget.style.color = "#aaa"; } }}
-                                onMouseLeave={e => { if (tab !== t.key) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#555"; } }}
+                                onMouseEnter={e => { if (tab !== t.key) { e.currentTarget.style.background = "var(--bg-card-hover)"; e.currentTarget.style.color = "var(--text-primary)"; } }}
+                                onMouseLeave={e => { if (tab !== t.key) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-secondary)"; } }}
                             >
                                 <TabIcon active={tab === t.key}>{t.icon}</TabIcon>
                                 {t.label}
                             </button>
+
                         ))}
 
                         <div style={{ borderTop: "1px solid #141418", marginTop: 8, paddingTop: 8 }}>
@@ -202,10 +211,11 @@ export default function Settings() {
                                             onChange={e => setProfile(p => ({ ...p, [f.key]: e.target.value }))}
                                             style={inputStyle}
                                             onFocus={e => e.target.style.borderColor = `${C}60`}
-                                            onBlur={e => e.target.style.borderColor = "#1c1c22"}
+                                            onBlur={e => e.target.style.borderColor = "var(--border)"}
                                         />
                                     </div>
                                 ))}
+
                                 <div>
                                     <label style={labelStyle}>Role</label>
                                     <select
@@ -223,8 +233,9 @@ export default function Settings() {
                                 </div>
                             </div>
 
-                            <div style={{ marginTop: 24, padding: "16px", background: "#101012", borderRadius: 10, border: "1px solid #1c1c22" }}>
-                                <div style={{ fontSize: "0.75rem", color: "#555", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>Account Stats</div>
+                            <div style={{ marginTop: 24, padding: "16px", background: "var(--bg-secondary)", borderRadius: 10, border: "1px solid var(--border)" }}>
+                                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 10 }}>Account Stats</div>
+
                                 <div style={{ display: "flex", gap: 32 }}>
                                     {[
                                         { label: "Member Since", value: "Jan 2025" },
@@ -233,8 +244,9 @@ export default function Settings() {
                                     ].map(s => (
                                         <div key={s.label}>
                                             <div style={{ fontSize: "1.1rem", fontWeight: 700, color: C }}>{s.value}</div>
-                                            <div style={{ fontSize: "0.72rem", color: "#444", marginTop: 2 }}>{s.label}</div>
+                                            <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: 2 }}>{s.label}</div>
                                         </div>
+
                                     ))}
                                 </div>
                             </div>
@@ -267,9 +279,11 @@ export default function Settings() {
                                     ))}
                                 </div>
                                 <div style={{ marginTop: 16 }}>
+                                    <Toggle label="Lite Mode (Light Theme)" value={theme === 'light'} onChange={() => toggleTheme()} />
                                     <Toggle label="Compact Mode (denser layout)" value={prefs.compactMode} onChange={v => setPrefs(p => ({ ...p, compactMode: v }))} />
                                 </div>
                             </div>
+
 
                             <div className="card">
                                 <h4 style={{ margin: "0 0 4px 0", fontFamily: "'Space Grotesk',sans-serif", fontSize: "0.95rem" }}>Notification Preferences</h4>

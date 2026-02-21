@@ -55,13 +55,14 @@ function MetaRow({ icon, label, value, accent }) {
             padding: "7px 0",
             borderBottom: "1px solid rgba(255,255,255,0.04)",
         }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 7, color: "#555", fontSize: "0.78rem", fontWeight: 500 }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 7, color: "var(--text-muted)", fontSize: "0.78rem", fontWeight: 500 }}>
                 {icon}
                 {label}
             </span>
-            <span style={{ fontSize: "0.82rem", fontWeight: 600, color: accent || "#b0b0c4" }}>
+            <span style={{ fontSize: "0.82rem", fontWeight: 600, color: accent || "var(--text-secondary)" }}>
                 {value}
             </span>
+
         </div>
     );
 }
@@ -81,7 +82,7 @@ export default function Drivers() {
     return (
         <Layout>
 
-            
+
             <div style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between",
                 marginBottom: 24,
@@ -90,14 +91,15 @@ export default function Drivers() {
                     <h2 style={{
                         fontFamily: "'Space Grotesk', sans-serif",
                         fontSize: "1.6rem", fontWeight: 800,
-                        color: "#f0f0f0", letterSpacing: "-0.03em", margin: 0,
+                        color: "var(--text-primary)", letterSpacing: "-0.03em", margin: 0,
                     }}>
                         Driver Management
                     </h2>
-                    <p style={{ color: "#444", fontSize: "0.85rem", margin: "4px 0 0" }}>
+                    <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", margin: "4px 0 0" }}>
                         {drivers.length} registered drivers
                     </p>
                 </div>
+
                 <button
                     onClick={() => setShowAdd(true)}
                     style={{
@@ -117,26 +119,27 @@ export default function Drivers() {
                 </button>
             </div>
 
-            
+
             <div style={{
                 display: "flex", alignItems: "center", gap: 10,
-                background: "#111115", border: "1px solid #1e1e26",
+                background: "var(--bg-secondary)", border: "1px solid var(--border)",
                 borderRadius: 10, padding: "9px 14px", marginBottom: 28,
                 maxWidth: 380,
             }}>
-                <span style={{ color: "#444" }}><IconSearch /></span>
+                <span style={{ color: "var(--text-muted)" }}><IconSearch /></span>
                 <input
                     placeholder="Search by name or license…"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     style={{
                         background: "none", border: "none", outline: "none",
-                        color: "#d0d0e0", fontSize: "0.88rem", width: "100%", fontFamily: "inherit",
+                        color: "var(--text-primary)", fontSize: "0.88rem", width: "100%", fontFamily: "inherit",
                     }}
                 />
             </div>
 
-            
+
+
             <div style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
@@ -150,18 +153,19 @@ export default function Drivers() {
                             onMouseEnter={() => setHovered(driver.id)}
                             onMouseLeave={() => setHovered(null)}
                             style={{
-                                background: isHov ? "#111118" : "#0d0d12",
-                                border: `1px solid ${isHov ? C + "40" : "#1a1a22"}`,
+                                background: isHov ? "var(--bg-card-hover)" : "var(--bg-card)",
+                                border: `1px solid ${isHov ? "var(--border-light)" : "var(--border)"}`,
                                 borderRadius: 16,
                                 padding: "20px",
                                 transition: "all .22s ease",
                                 transform: isHov ? "translateY(-3px)" : "none",
-                                boxShadow: isHov ? `0 12px 40px rgba(79,70,229,0.15)` : "0 2px 12px rgba(0,0,0,0.3)",
+                                boxShadow: isHov ? "var(--shadow-lg)" : "var(--shadow-sm)",
                                 position: "relative",
                                 overflow: "hidden",
                             }}
                         >
-                            
+
+
                             <div style={{
                                 position: "absolute", top: -30, right: -30,
                                 width: 100, height: 100, borderRadius: "50%",
@@ -169,9 +173,9 @@ export default function Drivers() {
                                 pointerEvents: "none",
                             }} />
 
-                            
+
                             <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
-                                
+
                                 <div style={{
                                     width: 52, height: 52, borderRadius: 14,
                                     background: driver.color || C,
@@ -187,18 +191,19 @@ export default function Drivers() {
                                     <div style={{
                                         fontFamily: "'Space Grotesk', sans-serif",
                                         fontSize: "1.02rem", fontWeight: 700,
-                                        color: "#f0f0f0", letterSpacing: "-0.02em",
+                                        color: "var(--text-primary)", letterSpacing: "-0.02em",
                                         whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
                                     }}>
                                         {driver.name}
                                     </div>
+
                                     <div style={{ marginTop: 4 }}>
                                         <StatusBadge status={driver.status} />
                                     </div>
                                 </div>
                             </div>
 
-                            
+
                             <div style={{
                                 display: "flex", gap: 8, marginBottom: 14,
                             }}>
@@ -207,19 +212,20 @@ export default function Drivers() {
                                     { label: "Rating", value: driver.rating },
                                 ].map(s => (
                                     <div key={s.label} style={{
-                                        flex: 1, background: "#0a0a10",
-                                        border: "1px solid #1e1e28",
+                                        flex: 1, background: "var(--bg-secondary)",
+                                        border: "1px solid var(--border)",
                                         borderRadius: 10, padding: "8px 10px", textAlign: "center",
                                     }}>
-                                        <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#f0f0f0", fontFamily: "'Space Grotesk',sans-serif" }}>
+                                        <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "var(--text-primary)", fontFamily: "'Space Grotesk',sans-serif" }}>
                                             {s.label === "Rating" ? `${s.value}★` : s.value}
                                         </div>
-                                        <div style={{ fontSize: "0.67rem", color: "#444", marginTop: 2, textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.label}</div>
+                                        <div style={{ fontSize: "0.67rem", color: "var(--text-muted)", marginTop: 2, textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.label}</div>
                                     </div>
+
                                 ))}
                             </div>
 
-                            
+
                             <div style={{ borderTop: "1px solid #1a1a22", paddingTop: 4 }}>
                                 <MetaRow icon={<IconLicense />} label="License" value={driver.license} />
                                 <MetaRow icon={<IconPhone />} label="Phone" value={driver.phone} />
@@ -227,7 +233,7 @@ export default function Drivers() {
                                 <MetaRow icon={<IconCalendar />} label="Joined" value={driver.joined} accent="#555" />
                             </div>
 
-                            
+
                             <div style={{
                                 display: "flex", gap: 8, marginTop: 16,
                                 borderTop: "1px solid #1a1a22", paddingTop: 14,

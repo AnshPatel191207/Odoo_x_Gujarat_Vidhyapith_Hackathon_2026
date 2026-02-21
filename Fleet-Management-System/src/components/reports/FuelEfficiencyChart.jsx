@@ -36,11 +36,12 @@ export default function FuelEfficiencyChart() {
             <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: 16 }}>Monthly fuel efficiency (km/L) per vehicle</p>
             <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={FUEL_DATA} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="month" tick={{ fill: "#64748b", fontSize: 12 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: "#64748b", fontSize: 12 }} axisLine={false} tickLine={false} domain={[9, 16]} unit=" km/L" />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: "0.8rem", color: "#94a3b8" }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis dataKey="month" tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} domain={[9, 16]} unit=" km/L" />
+                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'var(--border)', strokeWidth: 1 }} />
+                    <Legend wrapperStyle={{ fontSize: "0.75rem", color: "var(--text-muted)", paddingTop: 10 }} iconType="circle" />
+
                     <Line type="monotone" dataKey="GJ-01-AB" stroke="#3b82f6" strokeWidth={2} dot={{ fill: "#3b82f6", r: 3 }} activeDot={{ r: 5 }} />
                     <Line type="monotone" dataKey="GJ-05-CD" stroke="#10b981" strokeWidth={2} dot={{ fill: "#10b981", r: 3 }} activeDot={{ r: 5 }} />
                     <Line type="monotone" dataKey="GJ-01-GH" stroke="#f59e0b" strokeWidth={2} dot={{ fill: "#f59e0b", r: 3 }} activeDot={{ r: 5 }} />

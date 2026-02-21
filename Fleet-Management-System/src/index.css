@@ -1,7 +1,4 @@
-
-
 :root {
-  
   --bg-primary: #0a0a0b;
   --bg-secondary: #101012;
   --bg-card: #131316;
@@ -9,7 +6,6 @@
   --border: #1c1c22;
   --border-light: #25252d;
 
-  
   --accent: #4f46e5;
   --accent-light: #6366f1;
   --accent-dark: #3730a3;
@@ -18,7 +14,6 @@
   --accent2: #4f46e5;
   --accent2-light: #6366f1;
 
-  
   --brand-gradient: #4f46e5;
   --brand-glow: 0 0 0 1px rgba(79, 70, 229, 0.3), 0 4px 20px rgba(79, 70, 229, 0.2);
 
@@ -52,6 +47,27 @@
   --t-fast: 0.15s ease;
   --t-normal: 0.25s ease;
 }
+
+:root.light {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 0 1px rgba(79, 70, 229, 0.1), 0 4px 6px rgba(79, 70, 229, 0.05);
+
+  --accent-glow: rgba(79, 70, 229, 0.08);
+}
+
 
 
 *,
@@ -608,8 +624,9 @@ a {
 .driver-card:hover {
   border-color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 8px 24px var(--accent-glow);
 }
+
 
 .driver-avatar {
   width: 52px;
@@ -782,7 +799,7 @@ a {
     --navbar-h: 56px;
   }
 
-  
+
   .app-layout {
     display: block;
   }
@@ -793,7 +810,7 @@ a {
     padding: 16px;
   }
 
-  
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;
@@ -807,7 +824,7 @@ a {
     justify-content: center;
   }
 
-  
+
   .toolbar {
     flex-direction: column;
     align-items: stretch;
@@ -818,30 +835,30 @@ a {
     width: 100%;
   }
 
-  
+
   .filter-tabs {
     overflow-x: auto;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
   }
 
-  
+
   .kpi-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
-  
+
   .charts-grid {
     grid-template-columns: 1fr;
   }
 
-  
+
   .driver-grid {
     grid-template-columns: 1fr;
   }
 
-  
+
   .table-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -851,12 +868,12 @@ a {
     min-width: 600px;
   }
 
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
 
-  
+
   .modal {
     padding: 20px 16px;
     max-width: 100%;
@@ -872,7 +889,7 @@ a {
     justify-content: center;
   }
 
-  
+
   .card {
     padding: 14px;
   }
@@ -953,12 +970,12 @@ a {
     display: none !important;
   }
 
-  
+
   .navbar-hamburger {
     display: flex !important;
   }
 
-  
+
   .navbar-brand-text>div:last-child {
     display: none;
   }
