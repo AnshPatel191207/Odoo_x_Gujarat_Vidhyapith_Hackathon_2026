@@ -1,6 +1,6 @@
 # Odoo_x_Gujarat_Vidhyapith_Hackathon_2026
 
-This is ourwebsite video link 
+This is our project's video link : 
 "https://www.youtube.com/watch?v=77iN7gWRZcI"
 
 🎯 Purpose of the Project
