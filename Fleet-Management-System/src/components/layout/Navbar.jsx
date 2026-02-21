@@ -2,6 +2,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import { useFleet } from "../../context/FleetContext";
 
 
 
@@ -44,6 +45,7 @@ export default function Navbar({ onMenuClick }) {
   const { logout, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { searchQuery, setSearchQuery } = useFleet();
 
   const location = useLocation();
   const [showNotif, setShowNotif] = useState(false);
@@ -120,7 +122,16 @@ export default function Navbar({ onMenuClick }) {
         >
 
           <span style={{ color: "#333", flexShrink: 0 }}><SearchIcon /></span>
-          <input placeholder="Search vehicles, drivers, trips…" style={{ background: "none", border: "none", outline: "none", color: "#888", fontSize: "0.82rem", fontFamily: "'Inter',sans-serif", width: "100%" }} />
+          <input
+            placeholder="Search vehicles, drivers, trips..."
+            style={{
+              background: "none", border: "none", outline: "none",
+              color: "var(--text-primary)", fontSize: "0.82rem",
+              fontFamily: "'Inter',sans-serif", width: "100%"
+            }}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <kbd style={{ backgroundColor: `${C}15`, border: `1px solid ${C}25`, borderRadius: 5, padding: "1px 6px", fontSize: "0.65rem", color: "#555", fontFamily: "monospace", flexShrink: 0 }}>⌘K</kbd>
         </div>
       </div>

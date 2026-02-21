@@ -3,7 +3,7 @@ import Layout from "../components/layout/Layout";
 import { useFleet } from "../context/FleetContext";
 
 export default function FuelLogs() {
-    const { vehicles, trips } = useFleet();
+    const { vehicles, trips, searchQuery, setSearchQuery } = useFleet();
     const [filter, setFilter] = useState("all");
 
 
@@ -18,7 +18,15 @@ export default function FuelLogs() {
         { id: 8, date: "2026-02-14", vehicle: "GJ-10-OP-1122", liters: 52, costPerLiter: 102.0, total: 5304.0, odometer: 54840, type: "Petrol", trip: "ST → VSD" },
     ];
 
-    const filtered = filter === "all" ? FUEL_LOGS : FUEL_LOGS.filter(l => l.type.toLowerCase() === filter);
+    const query = searchQuery.toLowerCase().trim();
+    const filtered = FUEL_LOGS.filter(l => {
+        const matchFilter = filter === "all" || l.type.toLowerCase() === filter;
+        const matchSearch = !query ||
+            l.vehicle.toLowerCase().includes(query) ||
+            l.trip.toLowerCase().includes(query) ||
+            l.type.toLowerCase().includes(query);
+        return matchFilter && matchSearch;
+    });
 
     const totalLiters = FUEL_LOGS.reduce((s, l) => s + l.liters, 0);
     const totalCost = FUEL_LOGS.reduce((s, l) => s + l.total, 0);
@@ -54,24 +62,42 @@ export default function FuelLogs() {
                     <h2 className="page-title">Fuel Logs</h2>
                     <p className="page-subtitle">Track fuel fills, costs and efficiency across the fleet</p>
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                    {["all", "diesel", "petrol", "cng"].map(f => (
-                        <button
-                            key={f}
-                            onClick={() => setFilter(f)}
-                            style={{
-                                padding: "7px 14px", borderRadius: 8, border: "1px solid",
-                                fontSize: "0.8rem", fontWeight: 500, cursor: "pointer",
-                                textTransform: "capitalize", fontFamily: "inherit",
-                                background: filter === f ? "var(--accent)" : "transparent",
-                                borderColor: filter === f ? "var(--accent)" : "var(--border)",
-                                color: filter === f ? "#fff" : "var(--text-secondary)",
-                                transition: "all .15s",
-                            }}
-                        >
-                            {f === "all" ? "All Types" : f.charAt(0).toUpperCase() + f.slice(1)}
-                        </button>
-                    ))}
+                <div style={{ display: "flex", gap: 12 }}>
+                    <div className="search-bar" style={{
+                        display: "flex", alignItems: "center", gap: 8,
+                        background: "var(--bg-secondary)", border: "1px solid var(--border)",
+                        borderRadius: 10, padding: "7px 14px", width: 260
+                    }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2">
+                            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                        </svg>
+                        <input
+                            placeholder="Search logs..."
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            style={{ background: "none", border: "none", outline: "none", color: "var(--text-primary)", fontSize: "0.85rem", width: "100%" }}
+                        />
+                    </div>
+
+                    <div style={{ display: "flex", gap: 8 }}>
+                        {["all", "diesel", "petrol", "cng"].map(f => (
+                            <button
+                                key={f}
+                                onClick={() => setFilter(f)}
+                                style={{
+                                    padding: "7px 14px", borderRadius: 8, border: "1px solid",
+                                    fontSize: "0.8rem", fontWeight: 500, cursor: "pointer",
+                                    textTransform: "capitalize", fontFamily: "inherit",
+                                    background: filter === f ? "var(--accent)" : "transparent",
+                                    borderColor: filter === f ? "var(--accent)" : "var(--border)",
+                                    color: filter === f ? "#fff" : "var(--text-secondary)",
+                                    transition: "all .15s",
+                                }}
+                            >
+                                {f === "all" ? "All Types" : f.charAt(0).toUpperCase() + f.slice(1)}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
             </div>

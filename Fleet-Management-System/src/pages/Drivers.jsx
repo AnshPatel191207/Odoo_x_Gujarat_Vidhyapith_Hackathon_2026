@@ -68,15 +68,14 @@ function MetaRow({ icon, label, value, accent }) {
 }
 
 export default function Drivers() {
-    const { drivers, deleteDriver } = useFleet();
+    const { drivers, deleteDriver, searchQuery, setSearchQuery } = useFleet();
     const [showAdd, setShowAdd] = useState(false);
-    const [search, setSearch] = useState("");
     const [hovered, setHovered] = useState(null);
 
     const filtered = drivers.filter(d =>
-        !search ||
-        d.name.toLowerCase().includes(search.toLowerCase()) ||
-        d.license.toLowerCase().includes(search.toLowerCase())
+        !searchQuery ||
+        d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        d.license.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
@@ -129,8 +128,8 @@ export default function Drivers() {
                 <span style={{ color: "var(--text-muted)" }}><IconSearch /></span>
                 <input
                     placeholder="Search by name or license…"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
                     style={{
                         background: "none", border: "none", outline: "none",
                         color: "var(--text-primary)", fontSize: "0.88rem", width: "100%", fontFamily: "inherit",

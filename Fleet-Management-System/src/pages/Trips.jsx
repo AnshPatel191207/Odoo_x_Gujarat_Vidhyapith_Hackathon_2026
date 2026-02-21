@@ -5,15 +5,18 @@ import TripStatusPill from "../components/trips/TripStatusPill";
 import TripForm from "../components/trips/TripForm";
 
 export default function Trips() {
-    const { trips, deleteTrip } = useFleet();
+    const { trips, deleteTrip, searchQuery, setSearchQuery } = useFleet();
     const [showAdd, setShowAdd] = useState(false);
-    const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("All");
 
     const filtered = trips.filter(t => {
         const matchFilter = filter === "All" || t.status === filter;
-        const q = search.toLowerCase();
-        const matchSearch = !q || t.origin.toLowerCase().includes(q) || t.destination.toLowerCase().includes(q) || t.driver.toLowerCase().includes(q) || t.vehicle.toLowerCase().includes(q);
+        const q = searchQuery.toLowerCase().trim();
+        const matchSearch = !q ||
+            t.origin.toLowerCase().includes(q) ||
+            t.destination.toLowerCase().includes(q) ||
+            t.driver.toLowerCase().includes(q) ||
+            t.vehicle.toLowerCase().includes(q);
         return matchFilter && matchSearch;
     });
 
@@ -30,7 +33,7 @@ export default function Trips() {
                 <button className="btn btn-primary" onClick={() => setShowAdd(true)}>➕ New Trip</button>
             </div>
 
-            
+
             <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
                 {[
                     { label: "Total Trips", value: trips.length, color: "#3b82f6" },
@@ -51,13 +54,17 @@ export default function Trips() {
                 ))}
             </div>
 
-            
+
             <div className="toolbar">
                 <div className="search-bar">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
                     </svg>
-                    <input placeholder="Search by route, driver, vehicle..." value={search} onChange={e => setSearch(e.target.value)} />
+                    <input
+                        placeholder="Search by route, driver, vehicle..."
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                    />
                 </div>
                 <div className="filter-tabs">
                     {["All", "Completed", "In Progress", "Scheduled", "Cancelled"].map(f => (
@@ -66,7 +73,7 @@ export default function Trips() {
                 </div>
             </div>
 
-            
+
             <div className="table-wrapper">
                 <table className="fleet-table">
                     <thead>

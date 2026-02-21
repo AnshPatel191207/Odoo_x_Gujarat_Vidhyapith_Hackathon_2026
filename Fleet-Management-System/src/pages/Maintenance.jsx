@@ -17,16 +17,22 @@ const statusStyle = {
 };
 
 export default function Maintenance() {
-    const { maintenance, deleteMaintenance } = useFleet();
+    const { maintenance, deleteMaintenance, searchQuery, setSearchQuery } = useFleet();
     const [showAdd, setShowAdd] = useState(false);
     const [filter, setFilter] = useState("All");
 
     const overdue = maintenance.filter(m => m.status === "Overdue");
     const critical = maintenance.filter(m => m.priority === "Critical");
 
-    const filtered = maintenance.filter(m =>
-        filter === "All" || m.status === filter
-    );
+    const query = searchQuery.toLowerCase().trim();
+    const filtered = maintenance.filter(m => {
+        const matchFilter = filter === "All" || m.status === filter;
+        const matchSearch = !query ||
+            m.vehicle.toLowerCase().includes(query) ||
+            m.type.toLowerCase().includes(query) ||
+            m.technician.toLowerCase().includes(query);
+        return matchFilter && matchSearch;
+    });
 
     return (
         <Layout>
@@ -38,7 +44,7 @@ export default function Maintenance() {
                 <button className="btn btn-primary" onClick={() => setShowAdd(true)}>➕ Schedule Maintenance</button>
             </div>
 
-            
+
             {overdue.length > 0 && (
                 <div className="alert alert-danger">
                     <span className="alert-icon">🚨</span>
@@ -66,7 +72,7 @@ export default function Maintenance() {
                 </div>
             )}
 
-            
+
             <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
                 {[
                     { label: "Total Records", value: maintenance.length, color: "#3b82f6" },
@@ -86,8 +92,18 @@ export default function Maintenance() {
                 ))}
             </div>
 
-            
+
             <div className="toolbar">
+                <div className="search-bar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                    </svg>
+                    <input
+                        placeholder="Search by vehicle, type, technician..."
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                    />
+                </div>
                 <div className="filter-tabs">
                     {["All", "Scheduled", "In Progress", "Completed", "Overdue"].map(f => (
                         <button key={f} className={`filter-tab${filter === f ? " active" : ""}`} onClick={() => setFilter(f)}>{f}</button>
@@ -95,7 +111,7 @@ export default function Maintenance() {
                 </div>
             </div>
 
-            
+
             <div className="table-wrapper">
                 <table className="fleet-table">
                     <thead>

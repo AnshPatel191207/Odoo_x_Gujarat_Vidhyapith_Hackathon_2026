@@ -4,12 +4,20 @@ import FuelEfficiencyChart from "../components/reports/FuelEfficiencyChart";
 import ROIChart from "../components/reports/ROIChart";
 
 export default function Reports() {
-    const { vehicles, trips, maintenance, drivers } = useFleet();
+    const { vehicles, trips, maintenance, drivers, searchQuery } = useFleet();
 
     const totalRevenue = trips.filter(t => t.status === "Completed").reduce((s, t) => s + t.cost, 0);
     const totalMaintCost = maintenance.reduce((s, m) => s + m.cost, 0);
     const netROI = totalRevenue - totalMaintCost;
     const avgTripDist = trips.length ? (trips.reduce((s, t) => s + t.distance, 0) / trips.length).toFixed(0) : 0;
+
+    const query = searchQuery.toLowerCase().trim();
+    const filteredVehicles = vehicles.filter(v =>
+        !query ||
+        v.plate.toLowerCase().includes(query) ||
+        v.make.toLowerCase().includes(query) ||
+        v.model.toLowerCase().includes(query)
+    );
 
     return (
         <Layout>
@@ -21,7 +29,7 @@ export default function Reports() {
                 <button className="btn btn-secondary" onClick={() => window.print()}>🖨️ Print Report</button>
             </div>
 
-            
+
             <div className="kpi-grid" style={{ marginBottom: 24 }}>
                 {[
                     {
@@ -61,13 +69,13 @@ export default function Reports() {
             </div>
 
 
-            
+
             <div className="charts-grid">
                 <FuelEfficiencyChart />
                 <ROIChart />
             </div>
 
-            
+
             <div className="card" style={{ marginTop: 20, padding: 0, overflow: "hidden" }}>
                 <div style={{ padding: "18px 20px", borderBottom: "1px solid var(--border)" }}>
                     <h4>Vehicle Performance Overview</h4>
@@ -84,7 +92,7 @@ export default function Reports() {
                         </tr>
                     </thead>
                     <tbody>
-                        {vehicles.map(v => {
+                        {filteredVehicles.map(v => {
                             const vTrips = trips.filter(t => t.vehicle === v.plate && t.status === "Completed");
                             const vRevenue = vTrips.reduce((s, t) => s + t.cost, 0);
                             return (

@@ -2,10 +2,11 @@ import { useState } from "react";
 import Layout from "../components/layout/Layout";
 import VehicleTable from "../components/vehicles/VehicleTable";
 import AddVehicleModal from "../components/vehicles/AddVehicleModal";
+import { useFleet } from "../context/FleetContext";
 
 export default function Vehicles() {
+  const { searchQuery, setSearchQuery } = useFleet();
   const [showAdd, setShowAdd] = useState(false);
-  const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
 
   return (
@@ -27,8 +28,8 @@ export default function Vehicles() {
           </svg>
           <input
             placeholder="Search by plate, make, model..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
           />
         </div>
         <div className="filter-tabs">
@@ -38,7 +39,7 @@ export default function Vehicles() {
         </div>
       </div>
 
-      <VehicleTable search={search} filter={filter} />
+      <VehicleTable search={searchQuery} filter={filter} />
 
       {showAdd && <AddVehicleModal onClose={() => setShowAdd(false)} />}
     </Layout>

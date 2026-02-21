@@ -157,8 +157,10 @@ function ActionTile({ icon, label, sub, accent, onClick }) {
 
 
 export default function Dashboard() {
-  const { vehicles, drivers, trips, maintenance } = useFleet();
+  const { vehicles, drivers, trips, maintenance, searchQuery } = useFleet();
   const navigate = useNavigate();
+
+  const query = searchQuery.toLowerCase().trim();
 
   const today = new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
   const activeV = vehicles.filter(v => v.status === "Active").length;
@@ -170,7 +172,30 @@ export default function Dashboard() {
   const inProgT = trips.filter(t => t.status === "In Progress").length;
   const overdues = maintenance.filter(m => m.priority === "Overdue" || m.status === "Overdue");
   const criticals = maintenance.filter(m => m.priority === "Critical");
-  const recentTrips = [...trips].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 6);
+
+  const filteredTrips = trips.filter(t => {
+    const v = vehicles.find(vh => vh.plate === t.vehicle);
+    const vehicleName = v ? `${v.make} ${v.model}`.toLowerCase() : "";
+    return (
+      t.origin.toLowerCase().includes(query) ||
+      t.destination.toLowerCase().includes(query) ||
+      t.driver.toLowerCase().includes(query) ||
+      t.vehicle.toLowerCase().includes(query) ||
+      vehicleName.includes(query)
+    );
+  });
+
+  const recentTrips = [...filteredTrips].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 6);
+
+  const urgentMaintenance = [...overdues, ...criticals].filter(m => {
+    const v = vehicles.find(vh => vh.plate === m.vehicle);
+    const vehicleName = v ? `${v.make} ${v.model}`.toLowerCase() : "";
+    return (
+      m.vehicle.toLowerCase().includes(query) ||
+      m.type.toLowerCase().includes(query) ||
+      vehicleName.includes(query)
+    );
+  });
 
 
   const kpis = [
@@ -278,7 +303,7 @@ export default function Dashboard() {
           </div>
 
 
-          {(overdues.length + criticals.length) > 0 && (
+          {urgentMaintenance.length > 0 && (
             <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderLeft: `3px solid var(--danger)`, borderRadius: 14, overflow: "hidden" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid var(--border)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -286,12 +311,12 @@ export default function Dashboard() {
                   <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "var(--text-primary)", fontSize: "0.93rem" }}>Urgent Maintenance</span>
                 </div>
                 <span style={{ background: "var(--danger-bg)", border: "1px solid var(--danger)40", color: "var(--danger)", fontSize: "0.68rem", fontWeight: 700, padding: "2px 9px", borderRadius: 99 }}>
-                  {overdues.length + criticals.length} pending
+                  {urgentMaintenance.length} pending
                 </span>
               </div>
 
               <div style={{ padding: "12px 16px", display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 8 }}>
-                {[...overdues, ...criticals].slice(0, 4).map(m => (
+                {urgentMaintenance.slice(0, 4).map(m => (
                   <div key={m.id} style={{ padding: "11px 13px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderLeft: `2px solid ${m.priority === "Overdue" ? "var(--danger)" : "var(--warning)"}`, borderRadius: 9 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
                       <span style={{ fontFamily: "monospace", fontSize: "0.74rem", color: CL, background: `${C}12`, padding: "1px 5px", borderRadius: 4 }}>{m.vehicle}</span>

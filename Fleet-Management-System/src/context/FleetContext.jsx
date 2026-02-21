@@ -120,8 +120,9 @@ export function FleetProvider({ children }) {
   const [maintenance, setMaintenance] = useState(MOCK_MAINTENANCE);
   const [backendOnline, setBackendOnline] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  
+
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
@@ -137,7 +138,7 @@ export function FleetProvider({ children }) {
       setMaintenance(m.map(normalizeMaintenance));
       setBackendOnline(true);
     } catch {
-      
+
       console.warn("⚠️ Backend offline — using mock data.");
       setBackendOnline(false);
     } finally {
@@ -147,7 +148,7 @@ export function FleetProvider({ children }) {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
-  
+
   const addVehicle = async (v) => {
     if (backendOnline) {
       try {
@@ -189,7 +190,7 @@ export function FleetProvider({ children }) {
     setVehicles(prev => prev.filter(v => v.id !== id));
   };
 
-  
+
   const addDriver = async (d) => {
     if (backendOnline) {
       try {
@@ -219,7 +220,7 @@ export function FleetProvider({ children }) {
     setDrivers(prev => prev.filter(d => d.id !== id));
   };
 
-  
+
   const addTrip = async (t) => {
     if (backendOnline) {
       try {
@@ -250,7 +251,7 @@ export function FleetProvider({ children }) {
     setTrips(prev => prev.filter(t => t.id !== id));
   };
 
-  
+
   const addMaintenance = async (m) => {
     if (backendOnline) {
       try {
@@ -264,7 +265,7 @@ export function FleetProvider({ children }) {
           notes: m.notes,
         });
         setMaintenance(prev => [...prev, normalizeMaintenance(created)]);
-        
+
         if (created.vehicle_id) {
           setVehicles(prev => prev.map(v =>
             v.id === created.vehicle_id ? { ...v, status: "In Service" } : v
@@ -289,23 +290,25 @@ export function FleetProvider({ children }) {
 
   return (
     <FleetContext.Provider value={{
-      
+
       vehicles, setVehicles,
       drivers, setDrivers,
       trips, setTrips,
       maintenance, setMaintenance,
-      
+
       backendOnline, loading,
-      
+
       refetch: fetchAll,
-      
+
       addVehicle, updateVehicle, deleteVehicle,
-      
+
       addDriver, deleteDriver,
-      
+
       addTrip, deleteTrip,
-      
+
       addMaintenance, deleteMaintenance,
+
+      searchQuery, setSearchQuery,
     }}>
       {children}
     </FleetContext.Provider>
