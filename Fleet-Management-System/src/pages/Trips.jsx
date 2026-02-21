@@ -1,127 +1,103 @@
-import { useState } from "react";
 import Layout from "../components/layout/Layout";
+import { useState } from "react";
 import { useFleet } from "../context/FleetContext";
-import TripStatusPill from "../components/trips/TripStatusPill";
-import TripForm from "../components/trips/TripForm";
+
+const C = "#4f46e5";
+
+const SBADGE = {
+    "Completed": { bg: "var(--success-bg)", bd: "var(--success)40", c: "var(--success)" },
+    "In Progress": { bg: "var(--accent-glow)", bd: "var(--accent)40", c: "var(--accent-light)" },
+    "Scheduled": { bg: "var(--bg-secondary)", bd: "var(--border)", c: "var(--text-secondary)" },
+    "Cancelled": { bg: "var(--danger-bg)", bd: "var(--danger)40", c: "var(--danger)" },
+};
+
+function Pill({ s }) {
+    const t = SBADGE[s] || SBADGE["Scheduled"];
+    return <span style={{ padding: "4px 10px", borderRadius: 99, background: t.bg, border: `1px solid ${t.bd}`, color: t.c, fontSize: "0.72rem", fontWeight: 700, whiteSpace: "nowrap" }}>{s}</span>;
+}
 
 export default function Trips() {
-    const { trips, deleteTrip, searchQuery, setSearchQuery } = useFleet();
-    const [showAdd, setShowAdd] = useState(false);
+    const { trips, searchQuery, setSearchQuery } = useFleet();
     const [filter, setFilter] = useState("All");
 
     const filtered = trips.filter(t => {
-        const matchFilter = filter === "All" || t.status === filter;
-        const q = searchQuery.toLowerCase().trim();
-        const matchSearch = !q ||
-            t.origin.toLowerCase().includes(q) ||
-            t.destination.toLowerCase().includes(q) ||
-            t.driver.toLowerCase().includes(q) ||
-            t.vehicle.toLowerCase().includes(q);
-        return matchFilter && matchSearch;
+        const query = searchQuery.toLowerCase().trim();
+        const matchesSearch = t.origin.toLowerCase().includes(query) ||
+            t.destination.toLowerCase().includes(query) ||
+            t.driver.toLowerCase().includes(query) ||
+            t.vehicle.toLowerCase().includes(query);
+        const matchesFilter = filter === "All" || t.status === filter;
+        return matchesSearch && matchesFilter;
     });
-
-    const totalCost = filtered.filter(t => t.status === "Completed").reduce((s, t) => s + t.cost, 0);
-    const totalDist = filtered.filter(t => t.status === "Completed").reduce((s, t) => s + t.distance, 0);
 
     return (
         <Layout>
-            <div className="page-header">
+            <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
                 <div>
-                    <h2 className="page-title">Trip Management</h2>
-                    <p className="page-subtitle">{trips.length} total trips logged</p>
+                    <h1 className="page-title" style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.8rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>Trips</h1>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginTop: 4 }}>Monitor active and scheduled journeys</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => setShowAdd(true)}>➕ New Trip</button>
+                <button className="btn btn-primary" style={{ background: C, color: "#fff", padding: "10px 20px", borderRadius: 10, border: "none", fontWeight: 600, cursor: "pointer", boxShadow: `0 4px 12px ${C}30` }}>
+                    + New Trip
+                </button>
             </div>
 
-
-            <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
-                {[
-                    { label: "Total Trips", value: trips.length, color: "#3b82f6" },
-                    { label: "Completed", value: trips.filter(t => t.status === "Completed").length, color: "#10b981" },
-                    { label: "In Progress", value: trips.filter(t => t.status === "In Progress").length, color: "#3b82f6" },
-                    { label: "Scheduled", value: trips.filter(t => t.status === "Scheduled").length, color: "#06b6d4" },
-                    { label: "Total Revenue", value: `₹${(totalCost / 1000).toFixed(1)}K`, color: "#8b5cf6" },
-                    { label: "Total KM", value: `${totalDist.toLocaleString()} km`, color: "#f59e0b" },
-                ].map(s => (
-                    <div key={s.label} style={{
-                        flex: 1, padding: "12px 14px",
-                        background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "var(--r-md)",
-                        borderTop: `2px solid ${s.color}`,
-                    }}>
-                        <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.label}</div>
-                        <div style={{ fontSize: "1.25rem", fontWeight: 700, color: s.color, marginTop: 2 }}>{s.value}</div>
-                    </div>
-                ))}
-            </div>
-
-
-            <div className="toolbar">
-                <div className="search-bar">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-                    </svg>
+            <div className="toolbar" style={{ display: "flex", gap: 12, marginBottom: 20, alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center", flex: 1, maxWidth: 400 }} className="search-bar">
                     <input
-                        placeholder="Search by route, driver, vehicle..."
+                        placeholder="Search origin, destination, driver..."
+                        style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", outline: "none", fontFamily: "inherit" }}
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />
                 </div>
-                <div className="filter-tabs">
-                    {["All", "Completed", "In Progress", "Scheduled", "Cancelled"].map(f => (
-                        <button key={f} className={`filter-tab${filter === f ? " active" : ""}`} onClick={() => setFilter(f)}>{f}</button>
+
+                <div className="filter-tabs" style={{ display: "flex", gap: 6, background: "var(--bg-secondary)", padding: 4, borderRadius: 12, border: "1px solid var(--border)" }}>
+                    {["All", "In Progress", "Scheduled", "Completed"].map(t => (
+                        <button
+                            key={t}
+                            onClick={() => setFilter(t)}
+                            className="filter-tab"
+                            style={{
+                                padding: "7px 14px", borderRadius: 8, border: "none", fontSize: "0.82rem", fontWeight: 600, cursor: "pointer",
+                                background: filter === t ? "var(--bg-card)" : "transparent",
+                                color: filter === t ? C : "var(--text-muted)",
+                                boxShadow: filter === t ? "var(--shadow-sm)" : "none",
+                                transition: "all .15s"
+                            }}
+                        >{t}</button>
                     ))}
                 </div>
             </div>
 
-
             <div className="table-wrapper">
-                <table className="fleet-table">
+                <table className="fleet-table" style={{ width: "100%", borderCollapse: "collapse" }}>
                     <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Route</th>
-                            <th>Driver</th>
-                            <th>Vehicle</th>
-                            <th>Date</th>
-                            <th>Distance</th>
-                            <th>Cost (₹)</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                        <tr style={{ background: "var(--bg-secondary)" }}>
+                            {["Date", "Route", "Driver", "Vehicle", "Cost", "Status"].map(h => (
+                                <th key={h} style={{ padding: "12px 18px", textAlign: "left", fontSize: "0.68rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{h}</th>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
-                        {filtered.length === 0 ? (
-                            <tr><td colSpan={9} style={{ textAlign: "center", padding: "40px", color: "var(--text-muted)" }}>No trips found</td></tr>
-                        ) : filtered.map((trip, idx) => (
-                            <tr key={trip.id}>
-                                <td style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>{idx + 1}</td>
-                                <td>
-                                    <div style={{ fontWeight: 500 }}>{trip.origin}</div>
-                                    <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>→ {trip.destination}</div>
+                        {filtered.map(t => (
+                            <tr key={t.id} style={{ borderTop: "1px solid var(--border)", transition: "background .12s" }} onMouseEnter={e => e.currentTarget.style.background = "var(--bg-card-hover)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                                <td style={{ padding: "14px 18px", color: "var(--text-secondary)", fontSize: "0.82rem" }}>{t.date}</td>
+                                <td style={{ padding: "14px 18px" }}>
+                                    <div style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: "0.85rem" }}>{t.origin} → {t.destination}</div>
+                                    <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: 2 }}>{t.distance} km</div>
                                 </td>
-                                <td style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>{trip.driver}</td>
-                                <td>
-                                    <span style={{ fontFamily: "monospace", background: "var(--bg-secondary)", padding: "2px 6px", borderRadius: "var(--r-sm)", fontSize: "0.78rem", color: "var(--accent-light)" }}>
-                                        {trip.vehicle}
-                                    </span>
+                                <td style={{ padding: "14px 18px", color: "var(--text-secondary)", fontSize: "0.82rem" }}>{t.driver}</td>
+                                <td style={{ padding: "14px 18px" }}>
+                                    <span style={{ fontFamily: "monospace", background: `${C}12`, color: C, padding: "2px 7px", borderRadius: 5, fontSize: "0.78rem", border: `1px solid ${C}25` }}>{t.vehicle}</span>
                                 </td>
-                                <td style={{ color: "var(--text-muted)", fontSize: "0.82rem" }}>{trip.date}</td>
-                                <td style={{ color: "var(--text-secondary)" }}>{trip.distance} km</td>
-                                <td style={{ color: trip.cost > 0 ? "var(--success)" : "var(--text-muted)", fontWeight: trip.cost > 0 ? 600 : 400 }}>
-                                    {trip.cost > 0 ? `₹${trip.cost.toLocaleString()}` : "—"}
-                                </td>
-                                <td><TripStatusPill status={trip.status} /></td>
-                                <td>
-                                    <button className="btn-icon" title="Delete" onClick={() => { if (window.confirm("Delete this trip?")) deleteTrip(trip.id); }}>🗑️</button>
-                                </td>
+                                <td style={{ padding: "14px 18px", color: "var(--text-primary)", fontSize: "0.85rem", fontWeight: 600 }}>₹{t.cost.toLocaleString()}</td>
+                                <td style={{ padding: "14px 18px" }}><Pill s={t.status} /></td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-            <div style={{ marginTop: 10, fontSize: "0.8rem", color: "var(--text-muted)" }}>Showing {filtered.length} of {trips.length} trips</div>
-
-            {showAdd && <TripForm onClose={() => setShowAdd(false)} />}
         </Layout>
     );
 }

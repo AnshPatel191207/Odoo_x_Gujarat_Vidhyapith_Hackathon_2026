@@ -243,7 +243,7 @@ export default function Navbar({ onMenuClick }) {
 
 
           {showUser && (
-            <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, width: 210, background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", boxShadow: "var(--shadow-lg)", zIndex: 200 }}>
+            <div className="navbar-user-dropdown" style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, width: 210, background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", boxShadow: "var(--shadow-lg)", zIndex: 200 }}>
               <div style={{ padding: "14px 16px", borderBottom: "1px solid var(--border)" }}>
                 <div style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: "0.88rem" }}>Fleet Manager</div>
                 <div style={{ fontSize: "0.73rem", color: "var(--text-muted)", marginTop: 2, wordBreak: "break-all" }}>{user?.email}</div>
@@ -276,6 +276,6 @@ export default function Navbar({ onMenuClick }) {
           )}
         </div>
       </div>
-    </nav>
+    </nav >
   );
 }

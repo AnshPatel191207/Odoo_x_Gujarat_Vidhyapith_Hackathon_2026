@@ -46,9 +46,8 @@ export default function Sidebar({ isOpen, onClose }) {
           display: "flex", flexDirection: "column",
           padding: "16px 10px",
           zIndex: 90, overflowY: "auto",
-          transition: "transform .25s ease, width .25s ease",
+          transition: "transform .3s cubic-bezier(0.4, 0, 0.2, 1)",
         }}
-
       >
         <nav style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
           {NAV.map(item => {

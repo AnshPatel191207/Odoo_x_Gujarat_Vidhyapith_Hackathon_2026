@@ -104,16 +104,17 @@ function FleetDonut({ active, inService, inactive }) {
     { name: "Inactive", value: inactive || 1 },
   ];
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
-      <ResponsiveContainer width={110} height={110}>
-        <PieChart>
-          <Pie data={data} innerRadius={32} outerRadius={52} paddingAngle={3} dataKey="value" strokeWidth={0}>
-            {data.map((_, i) => <Cell key={i} fill={PIE_COLS[i]} />)}
-          </Pie>
-          <RTooltip contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: "0.78rem", color: "var(--text-primary)" }} itemStyle={{ color: "var(--text-primary)" }} />
-        </PieChart>
-
-      </ResponsiveContainer>
+    <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap" }}>
+      <div style={{ width: 110, height: 110 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie data={data} innerRadius={32} outerRadius={52} paddingAngle={3} dataKey="value" strokeWidth={0}>
+              {data.map((_, i) => <Cell key={i} fill={PIE_COLS[i]} />)}
+            </Pie>
+            <RTooltip contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: "0.78rem", color: "var(--text-primary)" }} itemStyle={{ color: "var(--text-primary)" }} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {data.map((d, i) => (
           <div key={d.name} style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -212,7 +213,7 @@ export default function Dashboard() {
     <Layout>
 
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 26 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 26, flexWrap: "wrap", gap: 16 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
             <div style={{ width: 3, height: 28, background: C, borderRadius: 99 }} />
@@ -244,14 +245,14 @@ export default function Dashboard() {
       </div>
 
 
-      <div className="dashboard-content-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) min(290px,100%)", gap: 14 }}>
+      <div className="dashboard-content-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 14 }}>
 
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0 }}>
 
 
           <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 20px", borderBottom: "1px solid var(--border)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 20px", borderBottom: "1px solid var(--border)", flexWrap: "wrap", gap: 8 }}>
               <div>
                 <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, color: "var(--text-primary)", fontSize: "0.94rem" }}>Recent Trips</div>
                 <div style={{ fontSize: "0.71rem", color: "var(--text-muted)", marginTop: 2 }}>Latest fleet movements</div>
@@ -261,45 +262,47 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr style={{ background: "var(--bg-secondary)" }}>
-                  {["Route", "Driver", "Vehicle", "Dist.", "Status"].map(h => (
-                    <th key={h} style={{ padding: "10px 18px", textAlign: "left", fontSize: "0.65rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", whiteSpace: "nowrap" }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-
-              <tbody>
-                {recentTrips.map((t, i) => (
-                  <tr key={t.id} style={{ borderTop: "1px solid var(--border)", transition: "background .12s" }}
-                    onMouseEnter={e => e.currentTarget.style.background = "var(--bg-card-hover)"}
-                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-                  >
-                    <td style={{ padding: "12px 18px" }}>
-                      <div style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: "0.84rem" }}>{t.origin}</div>
-                      <div style={{ color: "var(--text-muted)", fontSize: "0.73rem", marginTop: 1, display: "flex", alignItems: "center", gap: 3 }}><Ic.Pin />{t.destination}</div>
-                    </td>
-
-                    <td style={{ padding: "12px 18px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                        <div style={{ width: 26, height: 26, borderRadius: "50%", background: C, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.68rem", fontWeight: 800, color: "#fff", flexShrink: 0 }}>
-                          {t.driver.charAt(0)}
-                        </div>
-                        <span style={{ color: "var(--text-secondary)", fontSize: "0.81rem", whiteSpace: "nowrap" }}>{t.driver.split(" ")[0]}</span>
-                      </div>
-
-                    </td>
-                    <td style={{ padding: "12px 18px" }}>
-                      <span style={{ fontFamily: "monospace", background: `${C}12`, color: CL, padding: "2px 7px", borderRadius: 5, fontSize: "0.74rem", border: `1px solid ${C}25` }}>{t.vehicle}</span>
-                    </td>
-                    <td style={{ padding: "12px 18px", color: "var(--text-secondary)", fontSize: "0.81rem" }}>{t.distance} km</td>
-
-                    <td style={{ padding: "12px 18px" }}><Pill s={t.status} /></td>
+            <div className="table-wrapper" style={{ border: "none", borderRadius: 0 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "var(--bg-secondary)" }}>
+                    {["Route", "Driver", "Vehicle", "Dist.", "Status"].map(h => (
+                      <th key={h} style={{ padding: "10px 18px", textAlign: "left", fontSize: "0.65rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", whiteSpace: "nowrap" }}>{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {recentTrips.map((t, i) => (
+                    <tr key={t.id} style={{ borderTop: "1px solid var(--border)", transition: "background .12s" }}
+                      onMouseEnter={e => e.currentTarget.style.background = "var(--bg-card-hover)"}
+                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                    >
+                      <td style={{ padding: "12px 18px" }}>
+                        <div style={{ fontWeight: 600, color: "var(--text-primary)", fontSize: "0.84rem" }}>{t.origin}</div>
+                        <div style={{ color: "var(--text-muted)", fontSize: "0.73rem", marginTop: 1, display: "flex", alignItems: "center", gap: 3 }}><Ic.Pin />{t.destination}</div>
+                      </td>
+
+                      <td style={{ padding: "12px 18px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                          <div style={{ width: 26, height: 26, borderRadius: "50%", background: C, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.68rem", fontWeight: 800, color: "#fff", flexShrink: 0 }}>
+                            {t.driver.charAt(0)}
+                          </div>
+                          <span style={{ color: "var(--text-secondary)", fontSize: "0.81rem", whiteSpace: "nowrap" }}>{t.driver.split(" ")[0]}</span>
+                        </div>
+
+                      </td>
+                      <td style={{ padding: "12px 18px" }}>
+                        <span style={{ fontFamily: "monospace", background: `${C}12`, color: CL, padding: "2px 7px", borderRadius: 5, fontSize: "0.74rem", border: `1px solid ${C}25` }}>{t.vehicle}</span>
+                      </td>
+                      <td style={{ padding: "12px 18px", color: "var(--text-secondary)", fontSize: "0.81rem" }}>{t.distance} km</td>
+
+                      <td style={{ padding: "12px 18px" }}><Pill s={t.status} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
 

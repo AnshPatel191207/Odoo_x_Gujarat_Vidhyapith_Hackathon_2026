@@ -3,8 +3,10 @@ import { useFleet } from "../context/FleetContext";
 import FuelEfficiencyChart from "../components/reports/FuelEfficiencyChart";
 import ROIChart from "../components/reports/ROIChart";
 
+const C = "#4f46e5";
+
 export default function Reports() {
-    const { vehicles, trips, maintenance, drivers, searchQuery } = useFleet();
+    const { vehicles, trips, maintenance, searchQuery } = useFleet();
 
     const totalRevenue = trips.filter(t => t.status === "Completed").reduce((s, t) => s + t.cost, 0);
     const totalMaintCost = maintenance.reduce((s, m) => s + m.cost, 0);
@@ -21,14 +23,15 @@ export default function Reports() {
 
     return (
         <Layout>
-            <div className="page-header">
+            <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
                 <div>
-                    <h2 className="page-title">Analytics & Reports</h2>
-                    <p className="page-subtitle">Fleet performance insights and financial overview</p>
+                    <h1 className="page-title" style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.8rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>Analytics & Reports</h1>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginTop: 4 }}>Fleet performance insights and financial overview</p>
                 </div>
-                <button className="btn btn-secondary" onClick={() => window.print()}>🖨️ Print Report</button>
+                <button className="btn btn-secondary" onClick={() => window.print()} style={{ background: "var(--bg-secondary)", border: "1px solid var(--border)", color: "var(--text-secondary)", padding: "10px 20px", borderRadius: 10, fontWeight: 600, cursor: "pointer" }}>
+                    🖨️ Print Report
+                </button>
             </div>
-
 
             <div className="kpi-grid" style={{ marginBottom: 24 }}>
                 {[
@@ -49,15 +52,15 @@ export default function Reports() {
                         icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
                     },
                 ].map(kpi => (
-                    <div key={kpi.label} className="card" style={{ borderLeft: `3px solid ${kpi.color}` }}>
+                    <div key={kpi.label} className="card" style={{ borderLeft: `3px solid ${kpi.color}`, padding: "20px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                             <div>
                                 <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>{kpi.label}</div>
-                                <div style={{ fontSize: "1.75rem", fontWeight: 800, color: kpi.color }}>{kpi.value}</div>
+                                <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>{kpi.value}</div>
                             </div>
                             <div style={{
                                 width: 40, height: 40, borderRadius: 10,
-                                background: `${kpi.color}18`,
+                                background: `${kpi.color}15`,
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 color: kpi.color, flexShrink: 0,
                             }}>
@@ -68,57 +71,58 @@ export default function Reports() {
                 ))}
             </div>
 
-
-
-            <div className="charts-grid">
-                <FuelEfficiencyChart />
-                <ROIChart />
+            <div className="charts-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 20 }}>
+                <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, padding: "20px" }}>
+                    <FuelEfficiencyChart />
+                </div>
+                <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, padding: "20px" }}>
+                    <ROIChart />
+                </div>
             </div>
 
-
-            <div className="card" style={{ marginTop: 20, padding: 0, overflow: "hidden" }}>
+            <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", marginTop: 24 }}>
                 <div style={{ padding: "18px 20px", borderBottom: "1px solid var(--border)" }}>
-                    <h4>Vehicle Performance Overview</h4>
+                    <h3 style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>Vehicle Performance Overview</h3>
                 </div>
-                <table className="fleet-table">
-                    <thead>
-                        <tr>
-                            <th>Vehicle</th>
-                            <th>Type</th>
-                            <th>Mileage</th>
-                            <th>Trips Assigned</th>
-                            <th>Revenue (₹)</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredVehicles.map(v => {
-                            const vTrips = trips.filter(t => t.vehicle === v.plate && t.status === "Completed");
-                            const vRevenue = vTrips.reduce((s, t) => s + t.cost, 0);
-                            return (
-                                <tr key={v.id}>
-                                    <td>
-                                        <span style={{ fontFamily: "monospace", background: "var(--bg-secondary)", padding: "2px 6px", borderRadius: "var(--r-sm)", fontSize: "0.8rem", color: "var(--accent-light)" }}>
-                                            {v.plate}
-                                        </span>
-                                        <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: 2 }}>{v.make} {v.model}</div>
-                                    </td>
-                                    <td style={{ color: "var(--text-secondary)" }}>{v.type}</td>
-                                    <td style={{ color: "var(--text-secondary)" }}>{v.mileage.toLocaleString()} km</td>
-                                    <td style={{ color: "var(--text-secondary)" }}>{vTrips.length}</td>
-                                    <td style={{ color: "var(--success)", fontWeight: 600 }}>
-                                        {vRevenue > 0 ? `₹${vRevenue.toLocaleString()}` : "—"}
-                                    </td>
-                                    <td>
-                                        <span className={`badge ${v.status === "Active" ? "badge-success" : v.status === "In Service" ? "badge-warning" : "badge-muted"}`}>
-                                            {v.status}
-                                        </span>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                <div className="table-wrapper">
+                    <table className="fleet-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead>
+                            <tr style={{ background: "var(--bg-secondary)" }}>
+                                {["Vehicle", "Type", "Mileage", "Trips", "Revenue", "Status"].map(h => (
+                                    <th key={h} style={{ padding: "12px 18px", textAlign: "left", fontSize: "0.68rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredVehicles.map(v => {
+                                const vTrips = trips.filter(t => t.vehicle === v.plate && t.status === "Completed");
+                                const vRevenue = vTrips.reduce((s, t) => s + t.cost, 0);
+                                return (
+                                    <tr key={v.id} style={{ borderTop: "1px solid var(--border)", transition: "background .12s" }} onMouseEnter={e => e.currentTarget.style.background = "var(--bg-card-hover)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                                        <td style={{ padding: "14px 18px" }}>
+                                            <span style={{ fontFamily: "monospace", background: `${C}12`, color: C, padding: "2px 7px", borderRadius: 5, fontSize: "0.78rem", border: `1px solid ${C}25` }}>{v.plate}</span>
+                                            <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: 2 }}>{v.make} {v.model}</div>
+                                        </td>
+                                        <td style={{ padding: "14px 18px", color: "var(--text-secondary)", fontSize: "0.82rem" }}>{v.type}</td>
+                                        <td style={{ padding: "14px 18px", color: "var(--text-secondary)", fontSize: "0.82rem" }}>{v.mileage.toLocaleString()} km</td>
+                                        <td style={{ padding: "14px 18px", color: "var(--text-secondary)", fontSize: "0.82rem" }}>{vTrips.length}</td>
+                                        <td style={{ padding: "14px 18px", color: "#10b981", fontSize: "0.85rem", fontWeight: 600 }}>{vRevenue > 0 ? `₹${vRevenue.toLocaleString()}` : "—"}</td>
+                                        <td style={{ padding: "14px 18px" }}>
+                                            <span style={{
+                                                padding: "4px 10px", borderRadius: 99, fontSize: "0.68rem", fontWeight: 700,
+                                                background: v.status === "Active" ? "var(--success-bg)" : v.status === "In Service" ? "var(--warning-bg)" : "var(--bg-secondary)",
+                                                color: v.status === "Active" ? "var(--success)" : v.status === "In Service" ? "var(--warning)" : "var(--text-muted)",
+                                                border: v.status === "Active" ? "1px solid var(--success)30" : v.status === "In Service" ? "1px solid var(--warning)30" : "1px solid var(--border)"
+                                            }}>
+                                                {v.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </Layout>
     );
