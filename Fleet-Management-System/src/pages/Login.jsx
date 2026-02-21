@@ -337,6 +337,202 @@ function OAuthPopup({ provider, initialEmail, onComplete, onClose }) {
   );
 }
 
+/* ── Forgot Password Modal ─────────────────────────────────────── */
+function ForgotPasswordModal({ onClose }) {
+  const [fpEmail, setFpEmail] = useState("");
+  const [fpError, setFpError] = useState("");
+  const [fpSent, setFpSent] = useState(false);
+  const [fpLoading, setFpLoading] = useState(false);
+
+  const handleForgot = (e) => {
+    e.preventDefault();
+    if (!fpEmail || !fpEmail.includes("@")) { setFpError("Enter a valid email address."); return; }
+    setFpError("");
+    setFpLoading(true);
+    setTimeout(() => { setFpLoading(false); setFpSent(true); }, 1400);
+  };
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 9999,
+      background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }} onClick={onClose}>
+      <style>{`@keyframes mIn{from{opacity:0;transform:scale(.93) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}`}</style>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: 420, borderRadius: 16, padding: "36px 40px",
+        background: "#0d0d10", border: "1px solid #1c1c22",
+        boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
+        fontFamily: "'Inter',sans-serif", animation: "mIn .2s ease",
+      }}>
+        {/* header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+          <div>
+            <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "#f0f0f0", fontFamily: "'Space Grotesk',sans-serif", marginBottom: 4 }}>Forgot password?</div>
+            <div style={{ fontSize: "0.82rem", color: "#555" }}>We'll send a reset link to your email.</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#555", cursor: "pointer", fontSize: "1.2rem", padding: 0, lineHeight: 1 }}>✕</button>
+        </div>
+
+        {fpSent ? (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(79,70,229,0.15)", border: `1px solid ${C}40`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2.2" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+            </div>
+            <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#f0f0f0", marginBottom: 6 }}>Check your inbox</div>
+            <div style={{ fontSize: "0.82rem", color: "#555", marginBottom: 20 }}>Reset link sent to <strong style={{ color: "#888" }}>{fpEmail}</strong></div>
+            <button onClick={onClose} style={{ padding: "10px 28px", background: C, border: "none", borderRadius: 8, color: "#fff", fontWeight: 600, fontSize: "0.88rem", cursor: "pointer" }}>Done</button>
+          </div>
+        ) : (
+          <form onSubmit={handleForgot} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div>
+              <label style={{ fontSize: "0.72rem", fontWeight: 600, color: "#444", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>Email address</label>
+              <input
+                type="email" autoFocus
+                placeholder="example@gmail.com"
+                value={fpEmail} onChange={e => { setFpEmail(e.target.value); setFpError(""); }}
+                style={{ width: "100%", padding: "11px 14px", background: "#131316", border: `1px solid ${fpError ? "#ef4444" : "#1c1c22"}`, borderRadius: 9, color: "#f0f0f0", fontSize: "0.88rem", fontFamily: "inherit", outline: "none", boxSizing: "border-box" }}
+                onFocus={e => e.target.style.borderColor = `${C}60`}
+                onBlur={e => e.target.style.borderColor = fpError ? "#ef4444" : "#1c1c22"}
+              />
+              {fpError && <div style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: 4 }}>{fpError}</div>}
+            </div>
+            <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+              <button type="button" onClick={onClose} style={{ flex: 1, padding: "11px", background: "#131316", border: "1px solid #1c1c22", borderRadius: 9, color: "#555", fontSize: "0.88rem", cursor: "pointer", fontFamily: "inherit" }}>Cancel</button>
+              <button type="submit" disabled={fpLoading} style={{ flex: 2, padding: "11px", background: fpLoading ? "#2d2d3a" : C, border: "none", borderRadius: 9, color: fpLoading ? "#555" : "#fff", fontWeight: 600, fontSize: "0.88rem", cursor: fpLoading ? "not-allowed" : "pointer", fontFamily: "inherit", boxShadow: fpLoading ? "none" : `0 4px 14px ${C}40`, transition: "all .15s" }}>
+                {fpLoading ? "Sending…" : "Send Reset Link"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Request Access Modal ───────────────────────────────────────── */
+function RequestAccessModal({ onClose }) {
+  const [form, setForm] = useState({ name: "", email: "", role: "", company: "" });
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setErrors(e => ({ ...e, [k]: "" })); };
+
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = "Full name is required.";
+    if (!form.email || !form.email.includes("@")) e.email = "Enter a valid email.";
+    if (!form.role) e.role = "Please select a role.";
+    return e;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const e2 = validate();
+    if (Object.keys(e2).length) { setErrors(e2); return; }
+    setLoading(true);
+    setTimeout(() => { setLoading(false); setSubmitted(true); }, 1600);
+  };
+
+  const inputStyle = (err) => ({
+    width: "100%", padding: "11px 14px",
+    background: "#131316", border: `1px solid ${err ? "#ef4444" : "#1c1c22"}`,
+    borderRadius: 9, color: "#f0f0f0", fontSize: "0.88rem",
+    fontFamily: "inherit", outline: "none", boxSizing: "border-box",
+  });
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 9999,
+      background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: 440, borderRadius: 16, padding: "36px 40px",
+        background: "#0d0d10", border: "1px solid #1c1c22",
+        boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
+        fontFamily: "'Inter',sans-serif", animation: "mIn .2s ease",
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+          <div>
+            <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "#f0f0f0", fontFamily: "'Space Grotesk',sans-serif", marginBottom: 4 }}>Request Access</div>
+            <div style={{ fontSize: "0.82rem", color: "#555" }}>Tell us about yourself and we'll get back to you.</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "#555", cursor: "pointer", fontSize: "1.2rem", padding: 0, lineHeight: 1 }}>✕</button>
+        </div>
+
+        {submitted ? (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(79,70,229,0.15)", border: `1px solid ${C}40`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2.2" strokeLinecap="round"><polyline points="20 6 9 17 4 12" /></svg>
+            </div>
+            <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#f0f0f0", marginBottom: 6 }}>Request submitted!</div>
+            <div style={{ fontSize: "0.82rem", color: "#555", marginBottom: 20 }}>We'll review your request and reach out at <strong style={{ color: "#888" }}>{form.email}</strong> within 24 hours.</div>
+            <button onClick={onClose} style={{ padding: "10px 28px", background: C, border: "none", borderRadius: 8, color: "#fff", fontWeight: 600, fontSize: "0.88rem", cursor: "pointer" }}>Got it</button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {/* Name */}
+            <div>
+              <label style={{ fontSize: "0.72rem", fontWeight: 600, color: "#444", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>Full Name</label>
+              <input autoFocus placeholder="John Doe" value={form.name} onChange={e => set("name", e.target.value)}
+                style={inputStyle(errors.name)}
+                onFocus={e => e.target.style.borderColor = `${C}60`}
+                onBlur={e => e.target.style.borderColor = errors.name ? "#ef4444" : "#1c1c22"}
+              />
+              {errors.name && <div style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: 4 }}>{errors.name}</div>}
+            </div>
+            {/* Email */}
+            <div>
+              <label style={{ fontSize: "0.72rem", fontWeight: 600, color: "#444", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>Work Email</label>
+              <input type="email" placeholder="example@company.com" value={form.email} onChange={e => set("email", e.target.value)}
+                style={inputStyle(errors.email)}
+                onFocus={e => e.target.style.borderColor = `${C}60`}
+                onBlur={e => e.target.style.borderColor = errors.email ? "#ef4444" : "#1c1c22"}
+              />
+              {errors.email && <div style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: 4 }}>{errors.email}</div>}
+            </div>
+            {/* Company */}
+            <div>
+              <label style={{ fontSize: "0.72rem", fontWeight: 600, color: "#444", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>Company <span style={{ color: "#333", textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+              <input placeholder="Acme Corp" value={form.company} onChange={e => set("company", e.target.value)}
+                style={inputStyle(false)}
+                onFocus={e => e.target.style.borderColor = `${C}60`}
+                onBlur={e => e.target.style.borderColor = "#1c1c22"}
+              />
+            </div>
+            {/* Role */}
+            <div>
+              <label style={{ fontSize: "0.72rem", fontWeight: 600, color: "#444", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.06em" }}>Requested Role</label>
+              <select value={form.role} onChange={e => set("role", e.target.value)}
+                style={{ ...inputStyle(errors.role), cursor: "pointer", appearance: "none" }}
+                onFocus={e => e.target.style.borderColor = `${C}60`}
+                onBlur={e => e.target.style.borderColor = errors.role ? "#ef4444" : "#1c1c22"}
+              >
+                <option value="">Select a role…</option>
+                <option value="Fleet Manager">Fleet Manager</option>
+                <option value="Dispatcher">Dispatcher</option>
+                <option value="Driver">Driver</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Analyst">Analyst</option>
+              </select>
+              {errors.role && <div style={{ fontSize: "0.75rem", color: "#ef4444", marginTop: 4 }}>{errors.role}</div>}
+            </div>
+
+            <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+              <button type="button" onClick={onClose} style={{ flex: 1, padding: "11px", background: "#131316", border: "1px solid #1c1c22", borderRadius: 9, color: "#555", fontSize: "0.88rem", cursor: "pointer", fontFamily: "inherit" }}>Cancel</button>
+              <button type="submit" disabled={loading} style={{ flex: 2, padding: "11px", background: loading ? "#2d2d3a" : C, border: "none", borderRadius: 9, color: loading ? "#555" : "#fff", fontWeight: 600, fontSize: "0.88rem", cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit", boxShadow: loading ? "none" : `0 4px 14px ${C}40`, transition: "all .15s" }}>
+                {loading ? "Submitting…" : "Submit Request →"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -345,6 +541,8 @@ export default function Login() {
   const [oauthProvider, setOauthProvider] = useState(null);
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const [showRequestAccess, setShowRequestAccess] = useState(false);
 
   const { login, socialLogin } = useAuth();
   const navigate = useNavigate();
@@ -388,6 +586,8 @@ export default function Login() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", fontFamily: "'Inter',sans-serif", background: "#0a0a0b" }}>
+      {showForgot && <ForgotPasswordModal onClose={() => setShowForgot(false)} />}
+      {showRequestAccess && <RequestAccessModal onClose={() => setShowRequestAccess(false)} />}
       {oauthProvider && (
         <OAuthPopup
           provider={oauthProvider}
@@ -494,7 +694,7 @@ export default function Login() {
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                 <label style={{ fontSize: "0.75rem", fontWeight: 600, color: "#444", textTransform: "uppercase", letterSpacing: "0.06em" }}>Password</label>
-                <span style={{ fontSize: "0.75rem", color: C, cursor: "pointer" }}>Forgot?</span>
+                <span onClick={() => setShowForgot(true)} style={{ fontSize: "0.75rem", color: C, cursor: "pointer" }}>Forgot?</span>
               </div>
               <div style={{ position: "relative" }}>
                 <input
@@ -559,7 +759,7 @@ export default function Login() {
 
           <p style={{ textAlign: "center", fontSize: "0.76rem", color: "#333", marginTop: 20 }}>
             Don't have an account?{" "}
-            <span style={{ color: C, cursor: "pointer", fontWeight: 600 }}>Request access</span>
+            <span onClick={() => setShowRequestAccess(true)} style={{ color: C, cursor: "pointer", fontWeight: 600 }}>Request access</span>
           </p>
 
           <div style={{ marginTop: 24, padding: "9px 13px", background: "#131316", border: "1px solid #1c1c22", borderRadius: 9, display: "flex", alignItems: "center", gap: 8 }}>
