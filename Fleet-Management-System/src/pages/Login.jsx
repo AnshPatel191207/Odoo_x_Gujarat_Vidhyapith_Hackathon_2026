@@ -351,8 +351,7 @@ export default function Login() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("fleet_remembered_email");
-      if (saved) setEmail(saved);
+      localStorage.removeItem("fleet_remembered_email");
     } catch { }
   }, []);
 
@@ -438,23 +437,7 @@ export default function Login() {
                 <span style={{ fontSize: "0.86rem", color: "#888" }}>{f}</span>
               </div>
             ))}
-            <div style={{ marginTop: 48, padding: "16px", background: "#101012", border: "1px solid #1c1c22", borderRadius: 10 }}>
-              <div style={{ fontSize: "0.68rem", color: "#333", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>Quick Demo Login</div>
-              {[
-                { role: "Manager", email: "manager12@gmail.com", pass: "password123" },
-                { role: "Dispatcher", email: "dispatcher@gmail.com", pass: "password123" },
-              ].map(d => (
-                <div key={d.role} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                  <span style={{ fontSize: "0.76rem", color: "#555" }}>{d.role}</span>
-                  <span
-                    style={{ fontSize: "0.76rem", color: C, cursor: "pointer", fontFamily: "monospace" }}
-                    onClick={() => { setEmail(d.email); setPassword(d.pass); }}
-                  >
-                    {d.email}
-                  </span>
-                </div>
-              ))}
-            </div>
+
           </div>
         </div>
       </div>
