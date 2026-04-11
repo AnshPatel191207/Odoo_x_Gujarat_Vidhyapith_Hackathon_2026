@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /vehicles
+Disallow: /dashboard
+Disallow: /drivers
+Disallow: /trips
+Disallow: /maintenance
+Disallow: /reports
+
+sitemap:https://transvora-fleetflow.netlify.app/sitemap.xml
